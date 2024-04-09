@@ -1,0 +1,8 @@
+frontend/wailsjs/
+build/bin/
+node_modules/
+dist/
+
+# wails github
+package.json.md5
+.env
