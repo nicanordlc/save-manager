@@ -15,17 +15,19 @@ var assets embed.FS
 func main() {
 	// Create an instance of the app structure
 	app := NewApp()
+	appMenu := NewMenu(app)
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:            "save-manager",
-		Width:            425,
-		Height:           425,
-		MinWidth:         425,
-		MinHeight:        425,
-		AlwaysOnTop:      true,
+		Title:     "save-manager",
+		Width:     425,
+		Height:    425,
+		MinWidth:  425,
+		MinHeight: 425,
+		// AlwaysOnTop:      true,
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:        app.startup,
+		Menu:             appMenu,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
