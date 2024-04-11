@@ -19,7 +19,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:     "save-manager",
+		Title:     "Save Manager",
 		Width:     425,
 		Height:    425,
 		MinWidth:  425,

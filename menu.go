@@ -10,12 +10,10 @@ import (
 
 func NewMenu(app *App) *menu.Menu {
 	appMenu := menu.NewMenu()
+	appMenu.AddSeparator() // so this is the menu is initialized ?
 
 	addSaveManagerMenu(app, appMenu)
-
-	if runtime.GOOS == "darwin" {
-		appMenu.Append(menu.EditMenu())
-	}
+	addMacMenu(appMenu)
 
 	return appMenu
 }
@@ -25,4 +23,10 @@ func addSaveManagerMenu(app *App, appMenu *menu.Menu) {
 	fileMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
 		rt.Quit(app.ctx)
 	})
+}
+
+func addMacMenu(appMenu *menu.Menu) {
+	if runtime.GOOS == "darwin" {
+		appMenu.Append(menu.EditMenu())
+	}
 }
