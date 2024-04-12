@@ -1,8 +1,9 @@
 /// <reference types="vitest" />
 
 import {defineConfig} from 'vite'
-import react from '@vitejs/plugin-react'
 import path from 'path'
+import react from '@vitejs/plugin-react'
+import oxlintPlugin from 'vite-plugin-oxlint'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,7 +14,7 @@ export default defineConfig({
       '@components': path.resolve(__dirname, './src/components'),
     },
   },
-  plugins: [react()],
+  plugins: [react(), oxlintPlugin()],
   test: {
     environment: 'jsdom',
     globals: true,
