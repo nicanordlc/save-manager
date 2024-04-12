@@ -1,5 +1,5 @@
-import logo from "./assets/images/logo-universal.png";
-import Layout from "./components/ui/Layout";
+import Layout from "@/components/ui/Layout";
+import logo from "@/assets/images/logo-universal.png";
 
 function App() {
   const logoSize = 400;
