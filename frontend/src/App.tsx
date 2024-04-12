@@ -14,7 +14,7 @@ function App() {
         alt="logo"
       />
 
-      <h1 className="">Hello world!</h1>
+      <h1>Hello World</h1>
     </Layout>
   );
 }
