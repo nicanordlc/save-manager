@@ -25,6 +25,7 @@ const config = {
     'prettier'
   ],
   rules: {
+    "import/extensions": "off",
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/consistent-type-imports": [
