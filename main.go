@@ -16,14 +16,15 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 	appMenu := NewMenu(app)
+	appSize := 600
 
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:     "Save Manager",
-		Width:     425,
-		Height:    425,
-		MinWidth:  425,
-		MinHeight: 425,
+		Width:     appSize,
+		Height:    appSize,
+		MinWidth:  appSize,
+		MinHeight: appSize,
 		// AlwaysOnTop:      true,
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:        app.startup,
