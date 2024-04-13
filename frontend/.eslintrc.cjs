@@ -3,11 +3,17 @@ module.exports = {
   env: { browser: true, es2020: true },
   extends: [
     'eslint:recommended',
+    'airbnb',
+    'airbnb-typescript',
+    'airbnb/hooks',
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './frontend/tsconfig.json'
+  },
   plugins: ['react-refresh'],
   rules: {
     'react-refresh/only-export-components': [
