@@ -1,5 +1,5 @@
 /** @type {import("eslint").Linter.Config} */
-module.exports = {
+const config = {
   root: true,
   env: { browser: true, es2020: true },
   extends: [
@@ -15,7 +15,7 @@ module.exports = {
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './frontend/tsconfig.json'
+    project: true,
   },
   plugins: [
     'react-refresh',
@@ -30,3 +30,5 @@ module.exports = {
     ],
   },
 }
+
+module.exports = config
