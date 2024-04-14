@@ -12,7 +12,7 @@ const config = {
     'plugin:@typescript-eslint/recommended-type-checked',
     'plugin:@typescript-eslint/stylistic-type-checked',
     'plugin:react-hooks/recommended',
-    'plugin:prettier/recommended'
+    'plugin:prettier/recommended',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
@@ -22,23 +22,34 @@ const config = {
   plugins: [
     'react-refresh',
     '@typescript-eslint',
-    'prettier'
+    'unused-imports',
+    'simple-import-sort',
+    'prettier',
+  ],
+  overrides: [
+    {
+      files: ['**/*.test.ts{x,}'],
+      rules: {
+        '@typescript-eslint/no-floating-promises': 'off',
+      },
+    },
   ],
   rules: {
-    "import/extensions": "off",
-    "@typescript-eslint/array-type": "off",
-    "@typescript-eslint/consistent-type-definitions": "off",
-    "@typescript-eslint/consistent-type-imports": [
-      "error",
+    'import/extensions': 'off',
+    '@typescript-eslint/array-type': 'off',
+    '@typescript-eslint/consistent-type-definitions': 'off',
+    '@typescript-eslint/consistent-type-imports': [
+      'error',
       {
-        prefer: "type-imports",
-        fixStyle: "inline-type-imports",
+        prefer: 'type-imports',
+        fixStyle: 'inline-type-imports',
       },
     ],
-    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-    "@typescript-eslint/require-await": "off",
-    "@typescript-eslint/no-misused-promises": [
-      "error",
+    'unused-imports/no-unused-imports': 'error',
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/require-await': 'off',
+    '@typescript-eslint/no-misused-promises': [
+      'error',
       {
         checksVoidReturn: { attributes: false },
       },
@@ -49,6 +60,6 @@ const config = {
       { allowConstantExport: true },
     ],
   },
-}
+};
 
-module.exports = config
+module.exports = config;
