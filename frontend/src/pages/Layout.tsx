@@ -13,7 +13,7 @@ const Layout: FC<LayoutProps> = (props) => {
   return (
     <Container
       data-testid="layout"
-      className={clsx("min-h-screen bg-yellow-700", props.className)}
+      className={clsx("min-h-screen bg-yellow-800 text-white", props.className)}
     >
       {props.children}
     </Container>
