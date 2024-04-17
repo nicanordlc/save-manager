@@ -1,28 +1,28 @@
-import { render, screen } from '@testing-library/react';
-import { HashRouter, MemoryRouter } from 'react-router-dom';
-import App from '@/App';
+import { render, screen } from "@testing-library/react";
+import { HashRouter, MemoryRouter } from "react-router-dom";
+import App from "@/App";
 
-describe('App.tsx', () => {
-  it('renders hello world', () => {
+describe("App.tsx", () => {
+  it("renders hello world", () => {
     render(
       <HashRouter>
         <App />
-      </HashRouter>
+      </HashRouter>,
     );
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Hello World'
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "Hello World",
     );
   });
 
-  it('renders not found if invalid path', () => {
+  it("renders not found if invalid path", () => {
     render(
-      <MemoryRouter initialEntries={['/bananas']}>
+      <MemoryRouter initialEntries={["/bananas"]}>
         <App />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Not Found'
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "Not Found",
     );
   });
 });
