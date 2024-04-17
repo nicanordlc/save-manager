@@ -3,7 +3,7 @@ import Home from "@/pages/Home";
 import NotFound from "@/pages/NotFound";
 import Layout from "@/pages/Layout";
 
-function App() {
+const App = () => {
   return (
     <Layout>
       <Routes>
@@ -12,6 +12,6 @@ function App() {
       </Routes>
     </Layout>
   );
-}
+};
 
 export default App;

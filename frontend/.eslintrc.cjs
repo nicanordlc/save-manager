@@ -24,6 +24,7 @@ const config = {
     "@typescript-eslint",
     "unused-imports",
     "simple-import-sort",
+    "prefer-arrow",
     "prettier",
   ],
   overrides: [
@@ -35,6 +36,7 @@ const config = {
     },
   ],
   rules: {
+    "prefer-arrow/prefer-arrow-functions": "error",
     "react/function-component-definition": "off",
     "react/destructuring-assignment": "off",
     "import/extensions": "off",
