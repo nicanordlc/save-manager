@@ -1,5 +1,9 @@
 const Home = () => {
-  return <h1 className="min-h-screen bg-yellow-700">Hello World</h1>;
+  return (
+    <main>
+      <h1>Hello World</h1>
+    </main>
+  );
 };
 
 export default Home;

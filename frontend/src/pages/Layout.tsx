@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { type ReactHTML, type FC } from "react";
+import DraggableBar from "@/components/DraggableBar";
 
 type LayoutProps = {
   container?: keyof ReactHTML;
@@ -15,7 +16,9 @@ const Layout: FC<LayoutProps> = (props) => {
       data-testid="layout"
       className={clsx("min-h-screen bg-yellow-800 text-white", props.className)}
     >
-      {props.children}
+      <DraggableBar />
+
+      <div className="p-2">{props.children}</div>
     </Container>
   );
 };
