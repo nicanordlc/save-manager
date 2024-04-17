@@ -3,8 +3,16 @@
 /// <reference types="vite/client" />
 
 import { defineConfig } from "vite";
+import { configDefaults } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import path from "path";
+
+const ignoreTests = [
+  "wailsjs/*",
+  "postcss.config.js",
+  "tailwind.config.js",
+  "src/main.tsx",
+];
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -20,5 +28,9 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./src/setupTests.ts"],
+    exclude: [...configDefaults.exclude, ...ignoreTests],
+    coverage: {
+      exclude: [...(configDefaults.coverage.exclude ?? []), ...ignoreTests],
+    },
   },
 });

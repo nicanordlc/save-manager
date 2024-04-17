@@ -35,6 +35,8 @@ const config = {
     },
   ],
   rules: {
+    "react/function-component-definition": "off",
+    "react/destructuring-assignment": "off",
     "import/extensions": "off",
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
