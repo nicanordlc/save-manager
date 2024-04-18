@@ -1,4 +1,4 @@
-const Home = () => {
+const Saves = () => {
   return (
     <>
       <h1>Hello World</h1>
@@ -79,4 +79,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Saves;

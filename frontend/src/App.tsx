@@ -1,13 +1,13 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "@/pages/Home";
+import Saves from "@/pages/Saves";
 import NotFound from "@/pages/NotFound";
-import Layout from "@/pages/Layout";
+import Layout from "@/components/ui/Layout";
 
 const App = () => {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Saves />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>

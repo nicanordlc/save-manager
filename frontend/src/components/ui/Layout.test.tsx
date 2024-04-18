@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import Layout from "@/pages/Layout";
+import Layout from "@/components/ui/Layout";
 
 describe("Layout.tsx", () => {
   it("should render default layout", () => {
