@@ -6,7 +6,7 @@ const DraggableBar = () => {
   return (
     <div
       draggable={false}
-      className={clsx("border-4 border-blue-500 text-center", "no-select")}
+      className={clsx("flex h-7 items-center justify-center", "no-select")}
       style={style}
     >
       •••
