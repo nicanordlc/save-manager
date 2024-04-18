@@ -1,17 +1,34 @@
 import clsx from "clsx";
+import { type FC } from "react";
 
-const DraggableBar = () => {
+type DraggableBarProps = {
+  height: number;
+  className?: string;
+};
+
+const DraggableBar: FC<DraggableBarProps> = (props) => {
   const style = { "--wails-draggable": "drag" } as React.CSSProperties;
 
   return (
     <div
       draggable={false}
-      className={clsx("flex h-7 items-center justify-center", "no-select")}
-      style={style}
+      className={clsx(
+        "fixed left-0 right-0 top-0 flex items-center justify-center ",
+        "no-select",
+        props.className,
+      )}
+      style={{
+        ...style,
+        height: props.height,
+      }}
     >
       •••
     </div>
   );
+};
+
+DraggableBar.defaultProps = {
+  className: "",
 };
 
 export default DraggableBar;
