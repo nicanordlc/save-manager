@@ -1,4 +1,4 @@
-import { ToggleFullScreen } from "@wailsjs/go/main/App";
+import { ToggleFullScreen } from "@wailsjs/go/backend/App";
 import clsx from "clsx";
 import { type FC } from "react";
 

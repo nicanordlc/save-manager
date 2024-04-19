@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 
+	"github.com/cabaalexander/save-manager/backend"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -14,8 +15,8 @@ var assets embed.FS
 
 func main() {
 	// Create an instance of the app structure
-	app := NewApp()
-	appMenu := NewMenu(app)
+	app := backend.NewApp()
+	appMenu := backend.NewMenu(app)
 	appSize := 600
 
 	// Create application with options
@@ -27,7 +28,7 @@ func main() {
 		MinHeight: appSize,
 		// AlwaysOnTop:      true,
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-		OnStartup:        app.startup,
+		OnStartup:        app.Startup,
 		Menu:             appMenu,
 		AssetServer: &assetserver.Options{
 			Assets: assets,

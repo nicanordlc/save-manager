@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"context"
@@ -17,7 +17,7 @@ func TestNewApp(t *testing.T) {
 
 func TestStartup(t *testing.T) {
 	app := NewApp()
-	app.startup(context.TODO())
+	app.Startup(context.TODO())
 
 	got := fmt.Sprintf("%v", app.ctx)
 	want := "context.TODO"
