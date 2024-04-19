@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+
+	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -18,4 +20,12 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+}
+
+func (a *App) ToggleFullScreen() {
+	if rt.WindowIsFullscreen(a.ctx) {
+		rt.WindowUnfullscreen(a.ctx)
+	} else {
+		rt.WindowFullscreen(a.ctx)
+	}
 }

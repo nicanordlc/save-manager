@@ -1,3 +1,4 @@
+import { ToggleFullScreen } from "@wailsjs/go/main/App";
 import clsx from "clsx";
 import { type FC } from "react";
 
@@ -11,6 +12,7 @@ const DraggableBar: FC<DraggableBarProps> = (props) => {
 
   return (
     <div
+      onDoubleClick={ToggleFullScreen}
       draggable={false}
       className={clsx(
         "fixed left-0 right-0 top-0 z-10 flex items-center justify-center",
