@@ -1,16 +1,24 @@
-import { type FC } from "react";
-import { Link } from "react-router-dom";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Typography,
+} from "@material-tailwind/react";
 
-type GameProps = {
-  label: string;
-  id: number | string;
-};
-
-const Game: FC<GameProps> = (props) => {
+const Game = () => {
   return (
-    <div className="rounded-md border p-2">
-      <Link to={`/game/${props.id}`}> {props.label}</Link>
-    </div>
+    <li>
+      <Card className="size-40">
+        <CardBody className="p-2">
+          <Typography variant="h6" color="blue-gray" className="mb-2">
+            Hello
+          </Typography>
+        </CardBody>
+        <CardFooter className="p-2 pt-0">
+          <Typography>a</Typography>
+        </CardFooter>
+      </Card>
+    </li>
   );
 };
 

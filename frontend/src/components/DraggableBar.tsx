@@ -13,7 +13,7 @@ const DraggableBar: FC<DraggableBarProps> = (props) => {
     <div
       draggable={false}
       className={clsx(
-        "fixed left-0 right-0 top-0 flex items-center justify-center ",
+        "fixed left-0 right-0 top-0 z-10 flex items-center justify-center",
         "no-select",
         props.className,
       )}

@@ -1,3 +1,10 @@
+import {
+  faHamburger,
+  faPlusCircle,
+  faWrench,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconButton } from "@material-tailwind/react";
 import clsx from "clsx";
 import { type FC } from "react";
 import { Link } from "react-router-dom";
@@ -18,10 +25,27 @@ const Menu: FC<MenuProps> = (props) => {
       )}
     >
       <li>
-        <Link to="/">Saves</Link>
+        <Link to="/">
+          <IconButton>
+            <FontAwesomeIcon icon={faHamburger} />
+          </IconButton>
+        </Link>
       </li>
+
       <li>
-        <Link to="/settings">Settings</Link>
+        <Link to="/">
+          <IconButton>
+            <FontAwesomeIcon icon={faPlusCircle} />
+          </IconButton>
+        </Link>
+      </li>
+
+      <li>
+        <Link to="/settings">
+          <IconButton>
+            <FontAwesomeIcon icon={faWrench} />
+          </IconButton>
+        </Link>
       </li>
     </menu>
   );

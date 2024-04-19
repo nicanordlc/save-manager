@@ -11,18 +11,18 @@ type LayoutProps = {
 
 const Layout: FC<LayoutProps> = (props) => {
   const Container = props.container ?? "div";
-  const menuWidth = 80;
+  const menuWidth = 60;
   const dragBarHeight = 28;
 
   return (
     <Container
       data-testid="layout"
-      className={clsx("bg-c-sh-300 text-white", props.className)}
+      className={clsx("bg-main-300 text-white", props.className)}
     >
-      <DraggableBar className="bg-c-sh-100" height={dragBarHeight} />
+      <DraggableBar className="bg-main-100" height={dragBarHeight} />
 
       <Menu
-        className="bg-c-sh-200"
+        className="bg-main-200"
         width={menuWidth}
         height={`calc(100% - ${dragBarHeight}px)`}
       />
