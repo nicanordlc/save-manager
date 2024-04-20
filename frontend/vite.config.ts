@@ -27,7 +27,13 @@ export default defineConfig({
       "@wailsjs": path.resolve(__dirname, "./wailsjs"),
     },
   },
-  plugins: [react()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [["module:@preact/signals-react-transform"]],
+      },
+    }),
+  ],
   test: {
     environment: "jsdom",
     globals: true,

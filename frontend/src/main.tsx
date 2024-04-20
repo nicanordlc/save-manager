@@ -1,14 +1,28 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { HashRouter } from "react-router-dom";
-import { ThemeProvider } from "@material-tailwind/react";
+import {
+  type IconButtonStyleTypes,
+  ThemeProvider,
+} from "@material-tailwind/react";
 import App from "@/App";
 import "@/index.css";
+
+const iconButton: IconButtonStyleTypes = {
+  defaultProps: {
+    size: "lg",
+    color: "lime",
+  },
+};
+
+const theme = {
+  iconButton,
+};
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HashRouter>
-      <ThemeProvider>
+      <ThemeProvider value={theme}>
         <App />
       </ThemeProvider>
     </HashRouter>

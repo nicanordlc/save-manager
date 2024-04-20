@@ -1,13 +1,10 @@
-import {
-  faHamburger,
-  faPlusCircle,
-  faWrench,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconButton } from "@material-tailwind/react";
 import clsx from "clsx";
 import { type FC } from "react";
 import { Link } from "react-router-dom";
+import { FaGear } from "react-icons/fa6";
+import { FaHamburger } from "react-icons/fa";
+import MenuMiddleItem from "@/components/MenuMiddleItem";
 
 type MenuProps = {
   width: number;
@@ -27,23 +24,19 @@ const Menu: FC<MenuProps> = (props) => {
       <li>
         <Link to="/">
           <IconButton>
-            <FontAwesomeIcon icon={faHamburger} />
+            <FaHamburger />
           </IconButton>
         </Link>
       </li>
 
       <li>
-        <Link to="/">
-          <IconButton>
-            <FontAwesomeIcon icon={faPlusCircle} />
-          </IconButton>
-        </Link>
+        <MenuMiddleItem />
       </li>
 
       <li>
         <Link to="/settings">
           <IconButton>
-            <FontAwesomeIcon icon={faWrench} />
+            <FaGear />
           </IconButton>
         </Link>
       </li>
