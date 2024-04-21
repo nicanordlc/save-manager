@@ -4,6 +4,7 @@ import { HashRouter } from "react-router-dom";
 import {
   type IconButtonStyleTypes,
   ThemeProvider,
+  type CardHeaderStylesType,
 } from "@material-tailwind/react";
 import App from "@/App";
 import "@/index.css";
@@ -11,12 +12,21 @@ import "@/index.css";
 const iconButton: IconButtonStyleTypes = {
   defaultProps: {
     size: "lg",
-    color: "lime",
+    variant: "gradient",
+    color: "gray",
+  },
+};
+
+const cardHeader: CardHeaderStylesType = {
+  defaultProps: {
+    variant: "gradient",
+    color: "gray",
   },
 };
 
 const theme = {
   iconButton,
+  cardHeader,
 };
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

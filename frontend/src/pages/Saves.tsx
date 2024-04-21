@@ -13,20 +13,20 @@ const Saves = () => {
 
   return (
     <main>
-      <ul className={clsx("mb-4", "flex flex-wrap justify-around gap-2")}>
-        <Game />
-        <Game />
-        <Game />
-        <Game />
-        <Game />
-        <Game />
-        <Game />
-        <Game />
-        <Game />
-        <Game />
-        <Game />
-        <Game />
-        <Game />
+      <ul className={clsx("mb-4", "flex flex-wrap justify-around gap-3")}>
+        <Game title="DS1" />
+        <Game title="Game" />
+        <Game title="Game" />
+        <Game title="Game" />
+        <Game title="Game" />
+        <Game title="Game" />
+        <Game title="Game" />
+        <Game title="Game" />
+        <Game title="Game" />
+        <Game title="Game" />
+        <Game title="Game" />
+        <Game title="Game" />
+        <Game title="Game" />
       </ul>
     </main>
   );
