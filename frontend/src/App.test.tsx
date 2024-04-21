@@ -1,18 +1,18 @@
 import { render, screen } from "@testing-library/react";
-import { HashRouter, MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import App from "@/App";
 
 describe("App.tsx", () => {
-  it("renders hello world", () => {
+  it("renders button to add game save", () => {
     render(
-      <HashRouter>
+      <MemoryRouter initialEntries={["/"]}>
         <App />
-      </HashRouter>,
+      </MemoryRouter>,
     );
+    const got = screen.getByTestId("menuMiddleItem");
+    const want = screen.getByTestId("addGameSave");
 
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Hello World",
-    );
+    expect(got).toContainElement(want);
   });
 
   it("renders not found if invalid path", () => {

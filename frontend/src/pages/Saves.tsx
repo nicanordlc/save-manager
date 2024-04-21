@@ -6,7 +6,7 @@ import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
 
 const Saves = () => {
   useMenuMiddleItem(
-    <IconButton>
+    <IconButton data-testid="addGameSave">
       <FaPlus />
     </IconButton>,
   );

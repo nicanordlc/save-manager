@@ -1,7 +1,7 @@
 import menuMiddleItem from "@/signals/menu";
 
 const MenuMiddleItem = () => {
-  return <span>{menuMiddleItem}</span>;
+  return <span data-testid="menuMiddleItem">{menuMiddleItem}</span>;
 };
 
 export default MenuMiddleItem;
