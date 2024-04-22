@@ -16,7 +16,9 @@ var assets embed.FS
 func main() {
 	// Create an instance of the app structure
 	app := backend.NewApp()
+	settings := backend.NewSettings(app)
 	appMenu := backend.NewMenu(app)
+
 	appSize := 600
 
 	// Create application with options
@@ -35,6 +37,7 @@ func main() {
 		},
 		Bind: []interface{}{
 			app,
+			settings,
 		},
 		Mac: &mac.Options{
 			WebviewIsTransparent: true,

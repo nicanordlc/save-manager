@@ -1,34 +1,21 @@
-import { IconButton } from "@material-tailwind/react";
 import clsx from "clsx";
-import { FaPlus } from "react-icons/fa6";
+import { Card } from "@material-tailwind/react";
 import Game from "@/components/Game";
 import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
+import AddGame from "@/components/AddGame";
 
 const Saves = () => {
-  useMenuMiddleItem(
-    <IconButton data-testid="addGameSave">
-      <FaPlus />
-    </IconButton>,
-  );
+  useMenuMiddleItem(<AddGame />);
 
   return (
-    <main>
+    <Card className="h-0 grow overflow-y-auto p-2" color="indigo">
       <ul className={clsx("mb-4", "flex flex-wrap justify-around gap-3")}>
         <Game title="DS1" />
         <Game title="Game" />
         <Game title="Game" />
         <Game title="Game" />
-        <Game title="Game" />
-        <Game title="Game" />
-        <Game title="Game" />
-        <Game title="Game" />
-        <Game title="Game" />
-        <Game title="Game" />
-        <Game title="Game" />
-        <Game title="Game" />
-        <Game title="Game" />
       </ul>
-    </main>
+    </Card>
   );
 };
 

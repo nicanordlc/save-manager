@@ -36,6 +36,7 @@ const config = {
     },
   ],
   rules: {
+    "react/jsx-props-no-spreading": "off",
     "prefer-arrow/prefer-arrow-functions": "error",
     "react/function-component-definition": "off",
     "react/destructuring-assignment": "off",

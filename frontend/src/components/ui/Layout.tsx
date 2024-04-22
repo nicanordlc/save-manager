@@ -28,7 +28,7 @@ const Layout: FC<LayoutProps> = (props) => {
       />
 
       <div
-        className="p-2"
+        className="flex flex-col p-2"
         style={{
           marginTop: dragBarHeight,
           marginLeft: menuWidth,
