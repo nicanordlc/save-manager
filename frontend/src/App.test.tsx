@@ -21,8 +21,8 @@ describe("App.tsx", () => {
         <App />
       </MemoryRouter>,
     );
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Not Found",
-    );
+    const got = screen.getByRole("heading", { level: 1 });
+    const want = "Not Found";
+    expect(got).toHaveTextContent(want);
   });
 });
