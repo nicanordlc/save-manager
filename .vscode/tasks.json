@@ -9,7 +9,7 @@
       "presentation": {
         "echo": true,
         "reveal": "silent",
-        "focus": false,
+        "focus": true,
         "panel": "shared",
         "showReuseMessage": false,
         "clear": true,
@@ -23,7 +23,7 @@
       "presentation": {
         "echo": true,
         "reveal": "silent",
-        "focus": false,
+        "focus": true,
         "panel": "shared",
         "showReuseMessage": false,
         "clear": true,

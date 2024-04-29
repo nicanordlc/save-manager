@@ -74,7 +74,6 @@ const AddGame = () => {
 
               <Input
                 label="name"
-                crossOrigin={undefined}
                 required
                 {...register("name", { required: true })}
               />
