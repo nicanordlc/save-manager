@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"context"
 	"runtime"
 
 	"github.com/wailsapp/wails/v2/pkg/menu"
@@ -8,25 +9,34 @@ import (
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func NewMenu(app *App) *menu.Menu {
-	appMenu := menu.NewMenu()
-	appMenu.AddSeparator() // so this is the menu is initialized ?
-
-	addSaveManagerMenu(app, appMenu)
-	addMacMenu(appMenu)
-
-	return appMenu
+type AppMenu struct {
+	ctx  context.Context
+	Menu *menu.Menu
 }
 
-func addSaveManagerMenu(app *App, appMenu *menu.Menu) {
-	fileMenu := appMenu.AddSubmenu("Save Manager")
+func (m *AppMenu) Startup(ctx context.Context) {
+	m.ctx = ctx
+}
+
+func (m *AppMenu) addSaveManagerMenu() {
+	fileMenu := m.Menu.AddSubmenu("Save Manager")
 	fileMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
-		rt.Quit(app.ctx)
+		rt.Quit(m.ctx)
 	})
 }
 
-func addMacMenu(appMenu *menu.Menu) {
+func (m *AppMenu) addMacMenu() {
 	if runtime.GOOS == "darwin" {
-		appMenu.Append(menu.EditMenu())
+		m.Menu.Append(menu.EditMenu())
 	}
+}
+
+func NewMenu() *AppMenu {
+	newMenu := menu.NewMenu()
+
+	appMenu := AppMenu{Menu: newMenu}
+	appMenu.addSaveManagerMenu()
+	appMenu.addMacMenu()
+
+	return &appMenu
 }

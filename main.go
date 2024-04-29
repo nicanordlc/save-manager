@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 
 	"github.com/cabaalexander/save-manager/backend"
@@ -16,22 +17,25 @@ var assets embed.FS
 func main() {
 	// Create an instance of the app structure
 	app := backend.NewApp()
-	settings := backend.NewSettings(app)
-	appMenu := backend.NewMenu(app)
+	settings := backend.NewSettings()
+	appMenu := backend.NewMenu()
 
 	appSize := 600
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:     "Save Manager",
-		Width:     appSize,
-		Height:    appSize,
-		MinWidth:  appSize,
-		MinHeight: appSize,
-		// AlwaysOnTop:      true,
+		Title:            "Save Manager",
+		Width:            appSize,
+		Height:           appSize,
+		MinWidth:         appSize,
+		MinHeight:        appSize,
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-		OnStartup:        app.Startup,
-		Menu:             appMenu,
+		Menu:             appMenu.Menu,
+		OnStartup: func(ctx context.Context) {
+			app.Startup(ctx)
+			appMenu.Startup(ctx)
+			settings.Startup(ctx)
+		},
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

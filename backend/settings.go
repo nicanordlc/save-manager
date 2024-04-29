@@ -1,23 +1,59 @@
 package backend
 
 import (
+	"context"
+
+	"github.com/cabaalexander/save-manager/backend/utils"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+const (
+	jsonFilename = "settings.json"
+)
+
+type SettingsJson struct {
+	AlwaysOnTop bool
+}
+
 type Settings struct {
-	app         *App
-	alwaysOnTop bool
+	ctx context.Context
+	SettingsJson
+}
+
+func (s *Settings) Startup(ctx context.Context) {
+	s.ctx = ctx
+	utils.CreateConfigJsonIfNoExists[SettingsJson](jsonFilename)
+
+	settings, errSettings := s.ReadSettings()
+	if errSettings != nil {
+		panic(errSettings)
+	}
+	s.SettingsJson = *settings
+
+	// initialize settings
+	if settings.AlwaysOnTop {
+		rt.WindowSetAlwaysOnTop(s.ctx, true)
+	}
 }
 
 func (s *Settings) ToggleAlwaysOnTop() bool {
-	isAlwaysOnTop := !s.alwaysOnTop
-	s.alwaysOnTop = isAlwaysOnTop
+	isAlwaysOnTop := !s.AlwaysOnTop
+	s.AlwaysOnTop = isAlwaysOnTop
 
-	rt.WindowSetAlwaysOnTop(s.app.ctx, isAlwaysOnTop)
+	rt.WindowSetAlwaysOnTop(s.ctx, isAlwaysOnTop)
+	utils.WriteStructTo(jsonFilename, s.SettingsJson)
 
 	return isAlwaysOnTop
 }
 
-func NewSettings(a *App) *Settings {
-	return &Settings{app: a}
+func (s Settings) ReadSettings() (*SettingsJson, error) {
+	settingsJson, err := utils.ReadConfigFrom[SettingsJson](jsonFilename)
+	if err != nil {
+		return settingsJson, err
+	}
+	return settingsJson, nil
+}
+
+func NewSettings() *Settings {
+	return &Settings{}
 }
