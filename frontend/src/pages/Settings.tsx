@@ -4,10 +4,11 @@ import clsx from "clsx";
 import useSettings from "@/hooks/useSettings";
 
 const Settings = () => {
-  const settings = useSettings();
+  const { settings, ready } = useSettings();
   return (
     <Card className={clsx("flex h-0 grow p-2", "flex-wrap overflow-y-hidden")}>
       <Checkbox
+        disabled={!ready}
         defaultChecked={settings?.AlwaysOnTop}
         onClick={ToggleAlwaysOnTop}
         label="Always On Top"
