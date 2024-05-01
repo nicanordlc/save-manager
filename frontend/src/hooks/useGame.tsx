@@ -23,7 +23,7 @@ type UseGame = {
   queryArgs: Partial<GameSingle>;
 };
 
-const useGame = <T,>(props: Partial<UseGame>) => {
+const useGame = <T,>(props?: Partial<UseGame>) => {
   const queryClient = useQueryClient();
 
   const query = useQuery<T>({
