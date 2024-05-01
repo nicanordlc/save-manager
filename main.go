@@ -5,6 +5,7 @@ import (
 	"embed"
 
 	"github.com/cabaalexander/save-manager/backend"
+	"github.com/cabaalexander/save-manager/backend/utils"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -19,6 +20,10 @@ func main() {
 	app := backend.NewApp()
 	settings := backend.NewSettings()
 	appMenu := backend.NewMenu()
+	game := backend.NewGame()
+
+	apps := []utils.StartAble{app, settings, game, appMenu}
+	binds := []interface{}{app, settings, game}
 
 	appSize := 600
 
@@ -31,17 +36,12 @@ func main() {
 		MinHeight:        appSize,
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		Menu:             appMenu.Menu,
+		Bind:             binds,
 		OnStartup: func(ctx context.Context) {
-			app.Startup(ctx)
-			appMenu.Startup(ctx)
-			settings.Startup(ctx)
+			utils.StartApps(ctx, apps)
 		},
 		AssetServer: &assetserver.Options{
 			Assets: assets,
-		},
-		Bind: []interface{}{
-			app,
-			settings,
 		},
 		Mac: &mac.Options{
 			WebviewIsTransparent: true,
@@ -49,9 +49,6 @@ func main() {
 				TitlebarAppearsTransparent: true,
 				HideTitle:                  true,
 			},
-		},
-		Debug: options.Debug{
-			// OpenInspectorOnStartup: true,
 		},
 	})
 

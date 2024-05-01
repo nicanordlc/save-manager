@@ -7,22 +7,20 @@ import (
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-const (
-	jsonFilename = "settings.json"
-)
-
 type SettingsJson struct {
 	AlwaysOnTop bool
 }
 
 type Settings struct {
-	ctx context.Context
+	ctx      context.Context
+	filename string
 	SettingsJson
 }
 
 func (s *Settings) Startup(ctx context.Context) {
 	s.ctx = ctx
-	utils.CreateConfigJsonIfNoExists[SettingsJson](jsonFilename)
+	s.filename = "settings.json"
+	utils.CreateConfigJsonIfNoExists[SettingsJson](s.filename)
 
 	settings, errSettings := s.ReadSettings()
 	if errSettings != nil {
@@ -41,13 +39,13 @@ func (s *Settings) ToggleAlwaysOnTop() bool {
 	s.AlwaysOnTop = isAlwaysOnTop
 
 	rt.WindowSetAlwaysOnTop(s.ctx, isAlwaysOnTop)
-	utils.WriteStructTo(jsonFilename, s.SettingsJson)
+	utils.WriteStructTo(s.filename, s.SettingsJson)
 
 	return isAlwaysOnTop
 }
 
 func (s Settings) ReadSettings() (*SettingsJson, error) {
-	settingsJson, err := utils.ReadConfigFrom[SettingsJson](jsonFilename)
+	settingsJson, err := utils.ReadConfigFrom[SettingsJson](s.filename)
 	if err != nil {
 		return settingsJson, err
 	}

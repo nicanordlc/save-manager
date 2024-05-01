@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io/fs"
@@ -91,4 +92,14 @@ func createConfigDirIfNoExist() (string, error) {
 		os.Mkdir(appConfigPath, os.ModePerm)
 	}
 	return appConfigPath, nil
+}
+
+type StartAble interface {
+	Startup(ctx context.Context)
+}
+
+func StartApps(ctx context.Context, l []StartAble) {
+	for _, app := range l {
+		app.Startup(ctx)
+	}
 }

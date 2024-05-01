@@ -13,21 +13,30 @@ import { LogDebug } from "@wailsjs/runtime/runtime";
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { FaPlus, FaX } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
+import { AddGame as rtAddGame } from "@wailsjs/go/backend/Game";
 
 type FormInputs = {
   name: string;
+  path: string;
 };
 
 const AddGame = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const { register, handleSubmit } = useForm<FormInputs>();
+  const navigate = useNavigate();
 
   const toggleDialog = () => setIsDialogOpen(!isDialogOpen);
 
-  const onSubmit: SubmitHandler<FormInputs> = (data) => {
+  const createGameOnDb = (name: string, savePath: string) =>
+    rtAddGame(name, savePath);
+
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     LogDebug(JSON.stringify(data));
 
-    toggleDialog();
+    const gameID = (await createGameOnDb(data.name, data.path)) as string;
+
+    navigate(`/game/${gameID}`);
   };
 
   const tooltipContent = (
@@ -76,6 +85,12 @@ const AddGame = () => {
                 label="name"
                 required
                 {...register("name", { required: true })}
+              />
+
+              <Input
+                label="save path"
+                required
+                {...register("path", { required: true })}
               />
             </div>
           </DialogBody>
