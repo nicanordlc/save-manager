@@ -21,9 +21,9 @@ const Game: FC<GameProps> = (props) => {
   const [shouldMarquee, setShouldMarquee] = useState<boolean>(false);
 
   useEffect(() => {
-    const headerHeight = headerRef.current?.clientHeight ?? 0;
-    const typographyHeight = typographyRef.current?.clientHeight ?? 0;
-    setShouldMarquee(typographyHeight > headerHeight);
+    const headerWidth = headerRef.current?.clientWidth ?? 0;
+    const typographyWidth = typographyRef.current?.clientWidth ?? 0;
+    setShouldMarquee(typographyWidth > headerWidth);
   }, []);
 
   const getHeader = (title: string) => {
