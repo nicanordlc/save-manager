@@ -4,12 +4,12 @@ import clsx from "clsx";
 import useSettings from "@/hooks/useSettings";
 
 const Settings = () => {
-  const { query } = useSettings();
+  const { querySettings } = useSettings();
   return (
     <Card className={clsx("flex h-0 grow p-2", "flex-wrap overflow-y-hidden")}>
       <Checkbox
-        disabled={query.isLoading}
-        defaultChecked={query.data?.AlwaysOnTop}
+        disabled={querySettings.isLoading}
+        defaultChecked={querySettings.data?.AlwaysOnTop}
         onClick={ToggleAlwaysOnTop}
         label="Always On Top"
         crossOrigin={undefined}

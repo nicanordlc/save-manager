@@ -10,7 +10,7 @@ import (
 )
 
 type GameSingle struct {
-	UUID     uuid.UUID
+	ID       uuid.UUID
 	Name     string
 	SavePath string
 }
@@ -38,25 +38,25 @@ func (g *Game) Startup(ctx context.Context) {
 }
 
 func (g *Game) AddGame(name string, savePath string) uuid.UUID {
-	uuid := uuid.New()
-	game := GameSingle{UUID: uuid, Name: name, SavePath: savePath}
+	id := uuid.New()
+	game := GameSingle{ID: id, Name: name, SavePath: savePath}
 	g.JsonGame.Data = append(g.JsonGame.Data, game)
 	g.updateJson()
-	g.logf("Created: %v", uuid)
-	return uuid
+	g.logf("Created: %v", id)
+	return id
 }
 
-func (g *Game) RemoveGame(uuid uuid.UUID) {
+func (g *Game) RemoveGame(id uuid.UUID) {
 	newList := []GameSingle{}
 	for _, game := range g.JsonGame.Data {
-		if game.UUID == uuid {
+		if game.ID == id {
 			continue
 		}
 		newList = append(newList, game)
 	}
 	g.JsonGame.Data = newList
 	g.updateJson()
-	g.logf("Deleted: %v", uuid)
+	g.logf("Deleted: %v", id)
 }
 
 func (g *Game) ReadGames() (*JsonGame, error) {
@@ -65,6 +65,11 @@ func (g *Game) ReadGames() (*JsonGame, error) {
 		return gameJson, err
 	}
 	return gameJson, nil
+}
+
+func (g *Game) FindGame(id uuid.UUID) GameSingle {
+	g.logf("Finding game...")
+	return GameSingle{ID: uuid.New(), Name: "Foo m8 YES", SavePath: "d:/weo"}
 }
 
 func (g *Game) logf(format string, args ...interface{}) {

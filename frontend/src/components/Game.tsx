@@ -9,9 +9,10 @@ import {
 import { useEffect, useRef, useState, type FC } from "react";
 import Marquee from "react-fast-marquee";
 import { FaX } from "react-icons/fa6";
+import { Link } from "react-router-dom";
+import { type GameSingle } from "@/hooks/useGame";
 
-type GameProps = {
-  title: string;
+type GameProps = Pick<GameSingle, "ID" | "Name"> & {
   remove: () => void;
 };
 
@@ -46,12 +47,14 @@ const Game: FC<GameProps> = (props) => {
   return (
     <li>
       <Card className="mt-4 w-60">
-        <CardHeader
-          ref={headerRef}
-          className="-mt-3 mb-0 grid h-8 place-items-center"
-        >
-          {getHeader(props.title)}
-        </CardHeader>
+        <Link to={`/game/${props.ID}`}>
+          <CardHeader
+            ref={headerRef}
+            className="-mt-3 mb-0 grid h-8 place-items-center"
+          >
+            {getHeader(props.Name)}
+          </CardHeader>
+        </Link>
 
         <Badge
           className="m-0 p-0"

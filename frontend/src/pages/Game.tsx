@@ -11,6 +11,7 @@ const Game = () => {
   return (
     <Card className="h-0 grow overflow-y-auto p-2" color="indigo">
       <Typography variant="h1">{id}</Typography>
+      <Typography variant="paragraph">WEO</Typography>
     </Card>
   );
 };

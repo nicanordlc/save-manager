@@ -7,17 +7,18 @@ import Game from "@/components/Game";
 
 const Saves = () => {
   useMenuMiddleItem(<AddGame />);
-  const { query, removeGame } = useGame();
+  const { queryGames, removeGame } = useGame();
 
   return (
     <Card className="h-0 grow overflow-y-auto p-2" color="indigo">
       <ul className={clsx("mb-4", "flex flex-wrap justify-around gap-3")}>
-        {query.data?.Data.map(({ Name, UUID }) => {
+        {queryGames.data?.Data.map(({ Name, ID }) => {
           return (
             <Game
               key={`game-${Math.random()}`}
-              title={Name}
-              remove={() => removeGame({ UUID })}
+              Name={Name}
+              ID={ID}
+              remove={() => removeGame({ ID })}
             />
           );
         })}

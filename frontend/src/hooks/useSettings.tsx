@@ -6,11 +6,11 @@ type Settings = {
 };
 
 const useSettings = () => {
-  const query = useQuery<Settings>({
+  const querySettings = useQuery<Settings>({
     queryKey: ["settings"],
     queryFn: ReadSettings,
   });
-  return { query };
+  return { querySettings };
 };
 
 export default useSettings;
