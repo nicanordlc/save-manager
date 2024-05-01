@@ -20,18 +20,18 @@ type QueryKeys = "game" | "games";
 
 type UseGame = {
   queryKey: QueryKeys;
-  queryArgs: GameSingle;
+  queryArgs: Partial<GameSingle>;
 };
 
-const useGame = (props?: Partial<UseGame>) => {
+const useGame = <T,>(props: Partial<UseGame>) => {
   const queryClient = useQueryClient();
 
-  const query = useQuery<Game>({
+  const query = useQuery<T>({
     queryKey: [props?.queryKey ?? "games"] as QueryKeys[],
-    queryFn: async () => {
+    queryFn: () => {
       switch (props?.queryKey) {
         case "game": {
-          return FindGame(props.queryArgs);
+          return FindGame(props.queryArgs?.ID);
         }
         default: {
           return ReadGames();
