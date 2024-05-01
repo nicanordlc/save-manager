@@ -37,7 +37,7 @@ const Game: FC<GameProps> = (props) => {
 
   const getBadgeContent = () => {
     return (
-      <Button className="bg-transparent p-0" onClick={props.remove}>
+      <Button className="bg-transparent p-[6px]" onClick={props.remove}>
         <FaX size={10} />
       </Button>
     );
@@ -53,7 +53,11 @@ const Game: FC<GameProps> = (props) => {
           {getHeader(props.title)}
         </CardHeader>
 
-        <Badge placement="bottom-end" content={getBadgeContent()}>
+        <Badge
+          className="m-0 p-0"
+          placement="bottom-end"
+          content={getBadgeContent()}
+        >
           <CardBody className="p-2">
             <Typography color="blue-gray" className="mb-2">
               Status bar
