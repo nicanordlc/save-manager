@@ -7,7 +7,7 @@ import Game from "@/components/Game";
 
 const Saves = () => {
   useMenuMiddleItem(<AddGame />);
-  const { queryGames, removeGame } = useGame();
+  const { query: queryGames, removeGame } = useGame({ queryKey: "games" });
 
   return (
     <Card className="h-0 grow overflow-y-auto p-2" color="indigo">

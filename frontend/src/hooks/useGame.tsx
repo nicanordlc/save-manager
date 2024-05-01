@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AddGame, ReadGames, RemoveGame } from "@wailsjs/go/backend/Game";
+import {
+  AddGame,
+  FindGame,
+  ReadGames,
+  RemoveGame,
+} from "@wailsjs/go/backend/Game";
 
 export type GameSingle = {
   ID: string;
@@ -11,40 +16,48 @@ export type Game = {
   Data: GameSingle[];
 };
 
-export const QUERY_KEYS = {
-  games: "games",
-  game: "game",
-} as const;
+type QueryKeys = "game" | "games";
 
-const useGame = () => {
+type UseGame = {
+  queryKey: QueryKeys;
+  queryArgs: GameSingle;
+};
+
+const useGame = (props?: Partial<UseGame>) => {
   const queryClient = useQueryClient();
 
-  const queryGames = useQuery<Game>({
-    queryKey: [QUERY_KEYS.games],
-    queryFn: ReadGames,
+  const query = useQuery<Game>({
+    queryKey: [props?.queryKey ?? "games"] as QueryKeys[],
+    queryFn: async () => {
+      switch (props?.queryKey) {
+        case "game": {
+          return FindGame(props.queryArgs);
+        }
+        default: {
+          return ReadGames();
+        }
+      }
+    },
   });
 
+  const invalidateGamesQuery = () =>
+    queryClient.invalidateQueries({
+      queryKey: [props?.queryKey ?? "games"] as QueryKeys[],
+    });
+
   const { mutateAsync: removeGame } = useMutation({
-    onSuccess: () => {
-      return queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.games],
-      });
-    },
+    onSuccess: invalidateGamesQuery,
     mutationFn: (g: Pick<GameSingle, "ID">) => RemoveGame(g.ID),
   });
 
   const { mutateAsync: addGame } = useMutation({
-    onSuccess: () => {
-      return queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.games],
-      });
-    },
+    onSuccess: invalidateGamesQuery,
     mutationFn: (g: Pick<GameSingle, "Name" | "SavePath">) =>
       AddGame(g.Name, g.SavePath),
   });
 
   return {
-    queryGames,
+    query,
     removeGame,
     addGame,
   };
