@@ -9,12 +9,11 @@ import {
   Tooltip,
   Typography,
 } from "@material-tailwind/react";
-import { LogDebug } from "@wailsjs/runtime/runtime";
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { FaPlus, FaX } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
-import { AddGame as rtAddGame } from "@wailsjs/go/backend/Game";
+import useGame from "@/hooks/useGame";
 
 type FormInputs = {
   name: string;
@@ -23,18 +22,20 @@ type FormInputs = {
 
 const AddGame = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const { register, handleSubmit } = useForm<FormInputs>();
+  const { register, handleSubmit, reset } = useForm<FormInputs>();
   const navigate = useNavigate();
+  const { addGame } = useGame();
 
-  const toggleDialog = () => setIsDialogOpen(!isDialogOpen);
-
-  const createGameOnDb = (name: string, savePath: string) =>
-    rtAddGame(name, savePath);
+  const toggleDialog = () => {
+    setIsDialogOpen(!isDialogOpen);
+    reset();
+  };
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    LogDebug(JSON.stringify(data));
-
-    const gameID = (await createGameOnDb(data.name, data.path)) as string;
+    const gameID = (await addGame({
+      Name: data.name,
+      SavePath: data.path,
+    })) as string;
 
     navigate(`/game/${gameID}`);
   };

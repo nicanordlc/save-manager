@@ -10,7 +10,7 @@ const useSettings = () => {
     queryKey: ["settings"],
     queryFn: ReadSettings,
   });
-  return query;
+  return { query };
 };
 
 export default useSettings;

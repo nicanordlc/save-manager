@@ -2,9 +2,11 @@ package backend
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cabaalexander/save-manager/backend/utils"
 	"github.com/google/uuid"
+	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type GameSingle struct {
@@ -13,42 +15,65 @@ type GameSingle struct {
 	SavePath string
 }
 
-type GameJson struct {
+type JsonGame struct {
 	Data []GameSingle
 }
 
 type Game struct {
 	ctx      context.Context
 	filename string
-	GameJson
+	JsonGame
 }
 
 func (g *Game) Startup(ctx context.Context) {
 	g.ctx = ctx
 	g.filename = "game.json"
-	utils.CreateConfigJsonIfNoExists[GameJson](g.filename)
+	utils.CreateConfigJsonIfNoExists[JsonGame](g.filename)
 
 	game, err := g.ReadGames()
 	if err != nil {
 		panic(err)
 	}
-	g.GameJson = *game
+	g.JsonGame = *game
 }
 
 func (g *Game) AddGame(name string, savePath string) uuid.UUID {
 	uuid := uuid.New()
 	game := GameSingle{UUID: uuid, Name: name, SavePath: savePath}
-	g.GameJson.Data = append(g.GameJson.Data, game)
-	utils.WriteStructTo(g.filename, g.GameJson)
+	g.JsonGame.Data = append(g.JsonGame.Data, game)
+	g.updateJson()
+	g.logf("Created: %v", uuid)
 	return uuid
 }
 
-func (g *Game) ReadGames() (*GameJson, error) {
-	gameJson, err := utils.ReadConfigFrom[GameJson](g.filename)
+func (g *Game) RemoveGame(uuid uuid.UUID) {
+	newList := []GameSingle{}
+	for _, game := range g.JsonGame.Data {
+		if game.UUID == uuid {
+			continue
+		}
+		newList = append(newList, game)
+	}
+	g.JsonGame.Data = newList
+	g.updateJson()
+	g.logf("Deleted: %v", uuid)
+}
+
+func (g *Game) ReadGames() (*JsonGame, error) {
+	gameJson, err := utils.ReadConfigFrom[JsonGame](g.filename)
 	if err != nil {
 		return gameJson, err
 	}
 	return gameJson, nil
+}
+
+func (g *Game) logf(format string, args ...interface{}) {
+	msg := fmt.Sprintf(format, args...)
+	rt.LogDebugf(g.ctx, "[Game] %v", msg)
+}
+
+func (g *Game) updateJson() error {
+	return utils.WriteStructTo(g.filename, g.JsonGame)
 }
 
 func NewGame() *Game {

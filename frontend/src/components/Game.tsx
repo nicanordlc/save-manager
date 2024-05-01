@@ -1,4 +1,6 @@
 import {
+  Badge,
+  Button,
   Card,
   CardBody,
   CardHeader,
@@ -6,9 +8,11 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useRef, useState, type FC } from "react";
 import Marquee from "react-fast-marquee";
+import { FaX } from "react-icons/fa6";
 
 type GameProps = {
   title: string;
+  remove: () => void;
 };
 
 const Game: FC<GameProps> = (props) => {
@@ -31,6 +35,14 @@ const Game: FC<GameProps> = (props) => {
     return shouldMarquee ? <Marquee>{content}</Marquee> : content;
   };
 
+  const getBadgeContent = () => {
+    return (
+      <Button className="bg-transparent p-0" onClick={props.remove}>
+        <FaX size={10} />
+      </Button>
+    );
+  };
+
   return (
     <li>
       <Card className="mt-4 w-60">
@@ -41,11 +53,13 @@ const Game: FC<GameProps> = (props) => {
           {getHeader(props.title)}
         </CardHeader>
 
-        <CardBody className="p-2">
-          <Typography color="blue-gray" className="mb-2">
-            Status bar
-          </Typography>
-        </CardBody>
+        <Badge placement="bottom-end" content={getBadgeContent()}>
+          <CardBody className="p-2">
+            <Typography color="blue-gray" className="mb-2">
+              Status bar
+            </Typography>
+          </CardBody>
+        </Badge>
       </Card>
     </li>
   );
