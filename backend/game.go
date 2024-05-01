@@ -68,8 +68,13 @@ func (g *Game) ReadGames() (*JsonGame, error) {
 }
 
 func (g *Game) FindGame(id uuid.UUID) GameSingle {
-	g.logf("Finding game... -> %v", id)
-	return GameSingle{ID: uuid.New(), Name: "Foo m8 YES", SavePath: "d:/weo"}
+	for _, game := range g.JsonGame.Data {
+		if game.ID != id {
+			continue
+		}
+		return game
+	}
+	return GameSingle{}
 }
 
 func (g *Game) logf(format string, args ...interface{}) {
