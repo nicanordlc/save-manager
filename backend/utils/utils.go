@@ -98,8 +98,11 @@ type StartAble interface {
 	Startup(ctx context.Context)
 }
 
-func StartApps(ctx context.Context, l []StartAble) {
-	for _, app := range l {
-		app.Startup(ctx)
+func StartApps(l []StartAble) func(ctx context.Context) {
+	return func(ctx context.Context) {
+
+		for _, app := range l {
+			app.Startup(ctx)
+		}
 	}
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"embed"
 
 	"github.com/cabaalexander/save-manager/backend"
@@ -37,9 +36,7 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		Menu:             appMenu.Menu,
 		Bind:             binds,
-		OnStartup: func(ctx context.Context) {
-			utils.StartApps(ctx, apps)
-		},
+		OnStartup:        utils.StartApps(apps),
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
