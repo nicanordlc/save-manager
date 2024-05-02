@@ -14,7 +14,6 @@ const Settings = () => {
     <ul>
       <li>
         <Checkbox
-          className=""
           disabled={querySettings.isLoading}
           defaultChecked={querySettings.data?.AlwaysOnTop}
           onClick={() => handleOption(ToggleAlwaysOnTop)}
