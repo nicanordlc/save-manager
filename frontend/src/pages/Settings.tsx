@@ -3,7 +3,12 @@ import { ToggleAlwaysOnTop } from "@wailsjs/go/backend/Settings";
 import useSettings from "@/hooks/useSettings";
 
 const Settings = () => {
-  const { querySettings } = useSettings();
+  const { query: querySettings, updateSettings } = useSettings();
+
+  const handleOption = async (cb: () => Promise<boolean>) => {
+    await cb();
+    await updateSettings();
+  };
 
   return (
     <ul>
@@ -12,7 +17,7 @@ const Settings = () => {
           className=""
           disabled={querySettings.isLoading}
           defaultChecked={querySettings.data?.AlwaysOnTop}
-          onClick={ToggleAlwaysOnTop}
+          onClick={() => handleOption(ToggleAlwaysOnTop)}
           label="Always On Top"
           crossOrigin={undefined}
         />

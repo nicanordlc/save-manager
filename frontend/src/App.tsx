@@ -4,8 +4,10 @@ import NotFound from "@/pages/NotFound";
 import Layout from "@/components/ui/Layout";
 import Settings from "@/pages/Settings";
 import Game from "@/pages/Game";
+import useSettings from "@/hooks/useSettings";
 
 const App = () => {
+  useSettings();
   return (
     <Layout>
       <Routes>

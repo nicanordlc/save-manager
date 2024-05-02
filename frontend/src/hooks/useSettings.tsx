@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ReadSettings } from "@wailsjs/go/backend/Settings";
 
 type Settings = {
@@ -8,11 +8,17 @@ type Settings = {
 export const QUERY_KEY = "settings";
 
 const useSettings = () => {
-  const querySettings = useQuery<Settings>({
+  const queryClient = useQueryClient();
+
+  const query = useQuery<Settings>({
     queryKey: [QUERY_KEY],
     queryFn: ReadSettings,
   });
-  return { querySettings };
+
+  const updateSettings = () =>
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+
+  return { query, updateSettings };
 };
 
 export default useSettings;
