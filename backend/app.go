@@ -25,6 +25,14 @@ func (a *App) ToggleFullScreen() {
 	}
 }
 
+func (a *App) OpenDirectoryDialog() string {
+	path, err := rt.OpenDirectoryDialog(a.ctx, rt.OpenDialogOptions{})
+	if err != nil {
+		return ""
+	}
+	return path
+}
+
 // NewApp creates a new App application struct
 func NewApp() *App {
 	return &App{}

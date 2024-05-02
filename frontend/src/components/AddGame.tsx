@@ -12,32 +12,48 @@ import {
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { FaPlus, FaX } from "react-icons/fa6";
+import { FaDirections } from "react-icons/fa";
+import clsx from "clsx";
+import { OpenDirectoryDialog } from "@wailsjs/go/backend/App";
 import { useNavigate } from "react-router-dom";
-import useGame from "@/hooks/useGame";
+import useGame, { type GameSingle } from "@/hooks/useGame";
 
-type FormInputs = {
-  name: string;
-  path: string;
-};
+type FormInputs = Pick<GameSingle, "Name" | "SavePath">;
 
 const AddGame = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const { register, handleSubmit, reset } = useForm<FormInputs>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    clearErrors,
+    setFocus,
+    formState: { errors: formErrors },
+  } = useForm<FormInputs>();
   const navigate = useNavigate();
   const { addGame } = useGame();
+
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    const gameID = (await addGame({
+      Name: data.Name,
+      SavePath: data.SavePath,
+    })) as string;
+
+    navigate(`/game/${gameID}`);
+  };
 
   const toggleDialog = () => {
     setIsDialogOpen(!isDialogOpen);
     reset();
   };
 
-  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    const gameID = (await addGame({
-      Name: data.name,
-      SavePath: data.path,
-    })) as string;
-
-    navigate(`/game/${gameID}`);
+  const handlePath = async () => {
+    const path = await OpenDirectoryDialog();
+    if (path === "") return;
+    setValue("SavePath", path);
+    clearErrors("SavePath");
+    setFocus("Name");
   };
 
   const tooltipContent = (
@@ -83,15 +99,33 @@ const AddGame = () => {
               </Typography>
 
               <Input
+                labelProps={{
+                  className: "hidden",
+                }}
+                placeholder="name"
+                className={clsx(
+                  "!border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10",
+                  {
+                    "!border-red-300 focus:!border-red-900 focus:!border-t-red-900 focus:!ring-red-900/10":
+                      formErrors.Name,
+                  },
+                )}
                 label="name"
-                required
-                {...register("name", { required: true })}
+                {...register("Name", { required: true })}
               />
 
-              <Input
-                label="save path"
-                required
-                {...register("path", { required: true })}
+              <Button
+                onClick={handlePath}
+                className={clsx("flex items-center justify-center", {
+                  "bg-red-300": formErrors.SavePath,
+                })}
+              >
+                PATH
+                <FaDirections className="ml-2" />
+              </Button>
+              <input
+                className="hidden"
+                {...register("SavePath", { required: true })}
               />
             </div>
           </DialogBody>
