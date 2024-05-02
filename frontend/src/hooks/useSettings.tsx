@@ -5,9 +5,11 @@ type Settings = {
   AlwaysOnTop: boolean;
 };
 
+export const QUERY_KEY = "settings";
+
 const useSettings = () => {
   const querySettings = useQuery<Settings>({
-    queryKey: ["settings"],
+    queryKey: [QUERY_KEY],
     queryFn: ReadSettings,
   });
   return { querySettings };
