@@ -4,6 +4,7 @@ import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
 import AddGame from "@/components/AddGame";
 import useGame, { type Game as TGame } from "@/hooks/useGame";
 import Game from "@/components/Game";
+import NoGame from "@/components/NoGame";
 
 const Saves = () => {
   useMenuMiddleItem(<AddGame />);
@@ -11,10 +12,17 @@ const Saves = () => {
     queryKey: "games",
   });
 
+  const jsonData = queryGames.data?.Data;
+  const hasGame = Array.isArray(jsonData) ? jsonData.length : jsonData;
+
+  if (!hasGame) {
+    return <NoGame />;
+  }
+
   return (
     <Card className="h-0 grow overflow-y-auto p-2" color="indigo">
       <ul className={clsx("mb-4", "flex flex-wrap justify-around gap-3")}>
-        {queryGames.data?.Data.map(({ Name, ID }) => {
+        {queryGames.data?.Data?.map(({ Name, ID }) => {
           return (
             <Game
               key={`game-${Math.random()}`}

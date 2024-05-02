@@ -13,7 +13,7 @@ export type GameSingle = {
 };
 
 export type Game = {
-  Data: GameSingle[];
+  Data?: GameSingle[];
 };
 
 type QueryKeys = "game" | "games";
