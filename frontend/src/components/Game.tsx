@@ -33,7 +33,7 @@ const Game: FC<GameProps> = (props) => {
         {title}
       </Typography>
     );
-    return shouldMarquee ? <Marquee>{content}</Marquee> : content;
+    return shouldMarquee ? <Marquee speed={25}>{content}</Marquee> : content;
   };
 
   const getBadgeContent = () => {

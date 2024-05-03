@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { type FC } from "react";
 import { Link } from "react-router-dom";
 import { FaGear } from "react-icons/fa6";
-import { FaHamburger } from "react-icons/fa";
+import { FaSave } from "react-icons/fa";
 import MenuMiddleItem from "@/components/MenuMiddleItem";
 
 type MenuProps = {
@@ -24,7 +24,7 @@ const Menu: FC<MenuProps> = (props) => {
       <li>
         <Link to="/">
           <IconButton>
-            <FaHamburger />
+            <FaSave />
           </IconButton>
         </Link>
       </li>

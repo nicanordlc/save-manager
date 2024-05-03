@@ -36,11 +36,7 @@ const Layout: FC<LayoutProps> = (props) => {
           minHeight: `calc(100vh - ${dragBarHeight}px)`,
         }}
       >
-        <Card className="h-0 grow overflow-y-auto p-2 ">
-          {/* <Card className="flex h-0 grow flex-wrap overflow-y-hidden p-2"> */}
-          {/* <Card className="h-0 grow overflow-y-auto p-2"> */}
-          {props.children}
-        </Card>
+        <Card className="h-0 grow overflow-y-auto p-2 ">{props.children}</Card>
       </div>
     </Container>
   );
