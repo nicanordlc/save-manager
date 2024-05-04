@@ -46,7 +46,7 @@ const Game: FC<GameProps> = (props) => {
 
   return (
     <li>
-      <Card className="mt-4 w-60 bg-main-300">
+      <Card className="mt-4 w-60 border-4 shadow-none">
         <Link to={`/game/${props.ID}`}>
           <CardHeader
             ref={headerRef}
@@ -63,9 +63,7 @@ const Game: FC<GameProps> = (props) => {
           content={getBadgeContent()}
         >
           <CardBody className="p-2">
-            <Typography color="white" className="mb-2">
-              Status bar
-            </Typography>
+            <Typography className="mb-2">Status bar</Typography>
           </CardBody>
         </Badge>
       </Card>

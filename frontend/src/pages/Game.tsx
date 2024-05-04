@@ -17,14 +17,6 @@ import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
 import LightningSave from "@/components/LightningSave";
 import useSave from "@/hooks/useSave";
 
-const DATA_SAVES = [
-  {
-    id: String(Math.floor(Math.random() * 100)),
-    name: "Quick Save",
-    updatedAt: "21/21/21",
-  },
-];
-
 type GameQueryParams = {
   id: string;
 };
@@ -34,8 +26,8 @@ type FormInputs = {
 };
 
 const Game = () => {
-  const { id } = useParams<GameQueryParams>();
-  const { addSave } = useSave();
+  const { id = "" } = useParams<GameQueryParams>();
+  const { query: querySaves, addSave } = useSave({ GameID: id });
   const { query: queryGame } = useGame<GameSingle>({
     queryKey: "game",
     queryArgs: { ID: id },
@@ -55,9 +47,7 @@ const Game = () => {
     LogDebug("== Form Submit [Save]");
     LogDebug(JSON.stringify(data, null, 2));
 
-    if (id) {
-      await handleSave(data.Name, id);
-    }
+    await handleSave(data.Name, id);
 
     reset();
     clearErrors();
@@ -77,6 +67,10 @@ const Game = () => {
 
   const handleQuickLoad = () => {
     LogDebug("...QuickLoad");
+  };
+
+  const formatDate = (dateString: string) => {
+    return dateString;
   };
 
   useMenuMiddleItem(
@@ -121,26 +115,26 @@ const Game = () => {
         </CardHeader>
 
         <CardBody className="h-0 grow overflow-y-auto border-t-4 p-4">
-          {DATA_SAVES.map((row) => (
+          {querySaves.data?.map((save) => (
             <div
               className="flex items-center justify-between even:bg-blue-gray-50/50"
-              key={row.name}
+              key={save.Name}
             >
               <div className="flex items-center gap-2">
                 <Button
-                  onClick={() => handleLoad(row.id)}
+                  onClick={() => handleLoad(save.ID)}
                   className="p-3"
                   variant="text"
                 >
                   <FaUpload size={15} />
                 </Button>
-                <Typography>{row.name}</Typography>
+                <Typography>{save.Name}</Typography>
               </div>
 
-              <Typography>{row.updatedAt}</Typography>
+              <Typography>{formatDate(save.CreatedAt)}</Typography>
 
               <Button
-                onClick={() => handleDelete(row.id)}
+                onClick={() => handleDelete(save.ID)}
                 className="p-3"
                 variant="text"
               >

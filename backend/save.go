@@ -60,6 +60,16 @@ func (s *Save) ReadSaves() (*JsonSave, error) {
 	return saveJson, nil
 }
 
+func (s *Save) GetSaves(gameID uuid.UUID) []SaveSingle {
+	var gameSaves []SaveSingle
+	for _, save := range s.JsonSave.Data {
+		if save.GameID == gameID {
+			gameSaves = append(gameSaves, save)
+		}
+	}
+	return gameSaves
+}
+
 func (s *Save) logf(format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
 	rt.LogDebugf(s.ctx, "[Save] %v", msg)
