@@ -15,6 +15,7 @@ import { FaTrash, FaUpload } from "react-icons/fa6";
 import useGame, { type GameSingle } from "@/hooks/useGame";
 import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
 import LightningSave from "@/components/LightningSave";
+import useSave from "@/hooks/useSave";
 
 const DATA_SAVES = [
   {
@@ -34,6 +35,7 @@ type FormInputs = {
 
 const Game = () => {
   const { id } = useParams<GameQueryParams>();
+  const { addSave } = useSave();
   const { query: queryGame } = useGame<GameSingle>({
     queryKey: "game",
     queryArgs: { ID: id },
@@ -46,14 +48,16 @@ const Game = () => {
     formState: { errors: formErrors },
   } = useForm<FormInputs>();
 
-  const handleSave = () => {
-    LogDebug(`Saving...`);
-  };
+  const handleSave = (name: string, gameID: string) =>
+    addSave({ Name: name, GameID: gameID });
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     LogDebug("== Form Submit [Save]");
     LogDebug(JSON.stringify(data, null, 2));
-    handleSave();
+
+    if (id) {
+      await handleSave(data.Name, id);
+    }
 
     reset();
     clearErrors();
@@ -69,12 +73,10 @@ const Game = () => {
 
   const handleQuickSave = () => {
     LogDebug("...QuickSave");
-    handleSave();
   };
 
   const handleQuickLoad = () => {
     LogDebug("...QuickLoad");
-    handleLoad(`quickSave`);
   };
 
   useMenuMiddleItem(

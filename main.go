@@ -20,9 +20,10 @@ func main() {
 	settings := backend.NewSettings()
 	appMenu := backend.NewMenu()
 	game := backend.NewGame()
+	save := backend.NewSave()
 
-	apps := []utils.StartAble{app, settings, game, appMenu}
-	binds := []interface{}{app, settings, game}
+	apps := []utils.StartAble{app, settings, game, save, appMenu}
+	binds := []interface{}{app, settings, game, save}
 
 	appSize := 600
 
@@ -33,6 +34,8 @@ func main() {
 		Height:           appSize,
 		MinWidth:         appSize,
 		MinHeight:        appSize,
+		MaxWidth:         appSize,
+		MaxHeight:        appSize,
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		Menu:             appMenu.Menu,
 		Bind:             binds,

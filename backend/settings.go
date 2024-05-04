@@ -21,6 +21,7 @@ func (s *Settings) Startup(ctx context.Context) {
 	s.ctx = ctx
 	s.filename = "settings.json"
 	utils.CreateConfigJsonIfNoExists[JsonSettings](s.filename)
+	utils.CreateSavesDirIfNoExists()
 
 	settings, errSettings := s.ReadSettings()
 	if errSettings != nil {

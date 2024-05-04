@@ -43,6 +43,34 @@ func CreateConfigJsonIfNoExists[T any](filename string) (string, error) {
 	return settingsJson, nil
 }
 
+func CreateSavesDirIfNoExists() (string, error) {
+	err := createConfigDirIfNoExist()
+	if err != nil {
+		return "", err
+	}
+	savesDir, err := GetSavesDir()
+	if err != nil {
+		return "", err
+	}
+	dirExists, errDirExists := exists(savesDir)
+	if errDirExists != nil {
+		return "", errDirExists
+	}
+	if !dirExists {
+		os.Mkdir(savesDir, os.ModePerm)
+	}
+	return savesDir, nil
+}
+
+func GetSavesDir() (string, error) {
+	appConfig, err := GetAppConfigDir()
+	if err != nil {
+		return "", err
+	}
+	savesDir := path.Join(appConfig, "saves")
+	return savesDir, nil
+}
+
 func WriteStructTo[T any](filename string, jsonStruct T) error {
 	path, err := getConfigJson(filename)
 	if err != nil {
@@ -67,30 +95,42 @@ func exists(path string) (bool, error) {
 }
 
 func getConfigJson(filename string) (string, error) {
-	configDir, err := createConfigDirIfNoExist()
+	err := createConfigDirIfNoExist()
 	if err != nil {
 		return "", err
 	}
 	if filename == "" {
 		return "", errors.New("filename cannot be empty")
 	}
+	configDir, err := GetAppConfigDir()
+	if err != nil {
+		return "", err
+	}
 	settingsJson := path.Join(configDir, filename)
 	return settingsJson, nil
 }
 
-func createConfigDirIfNoExist() (string, error) {
+func createConfigDirIfNoExist() error {
+	appConfigPath, err := GetAppConfigDir()
+	if err != nil {
+		return err
+	}
+	dirExists, errDirExists := exists(appConfigPath)
+	if errDirExists != nil {
+		return errDirExists
+	}
+	if !dirExists {
+		os.Mkdir(appConfigPath, os.ModePerm)
+	}
+	return nil
+}
+
+func GetAppConfigDir() (string, error) {
 	userConfig, err := os.UserConfigDir()
 	if err != nil {
 		return "", err
 	}
 	appConfigPath := path.Join(userConfig, "Save Manager")
-	dirExists, errDirExists := exists(appConfigPath)
-	if errDirExists != nil {
-		return "", errDirExists
-	}
-	if !dirExists {
-		os.Mkdir(appConfigPath, os.ModePerm)
-	}
 	return appConfigPath, nil
 }
 

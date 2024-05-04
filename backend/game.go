@@ -3,6 +3,8 @@ package backend
 import (
 	"context"
 	"fmt"
+	"os"
+	"path"
 
 	"github.com/cabaalexander/save-manager/backend/utils"
 	"github.com/google/uuid"
@@ -42,6 +44,7 @@ func (g *Game) AddGame(name string, savePath string) uuid.UUID {
 	game := GameSingle{ID: id, Name: name, SavePath: savePath}
 	g.JsonGame.Data = append(g.JsonGame.Data, game)
 	g.updateJson()
+	CreateGameDir(id)
 	g.logf("Created: %v", id)
 	return id
 }
@@ -84,6 +87,25 @@ func (g *Game) logf(format string, args ...interface{}) {
 
 func (g *Game) updateJson() error {
 	return utils.WriteStructTo(g.filename, g.JsonGame)
+}
+
+func CreateGameDir(gameID uuid.UUID) error {
+	gameDir, err := GetGameDir(gameID)
+	if err != nil {
+		return err
+	}
+	os.Mkdir(gameDir, os.ModePerm)
+	return nil
+}
+
+func GetGameDir(gameID uuid.UUID) (string, error) {
+	savesDir, err := utils.GetSavesDir()
+	if err != nil {
+		return "", err
+	}
+	gameLabel := fmt.Sprintf("game-%v", gameID)
+	gameDir := path.Join(savesDir, gameLabel)
+	return gameDir, nil
 }
 
 func NewGame() *Game {
