@@ -70,6 +70,33 @@ func (s *Save) GetSaves(gameID uuid.UUID) []SaveSingle {
 	return gameSaves
 }
 
+func (s *Save) RemoveSave(saveID uuid.UUID, gameID uuid.UUID) error {
+	var newList []SaveSingle
+	for _, save := range s.JsonSave.Data {
+		if save.ID == saveID {
+			continue
+		}
+		newList = append(newList, save)
+	}
+	s.JsonSave.Data = newList
+	s.updateJson()
+	s.logf("Deleted: %v", saveID)
+	err := s.removeSaveDir(saveID, gameID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Save) removeSaveDir(saveID uuid.UUID, gameID uuid.UUID) error {
+	saveDir, err := GetSaveDir(saveID, gameID)
+	if err != nil {
+		return err
+	}
+	os.Remove(saveDir)
+	return nil
+}
+
 func (s *Save) logf(format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
 	rt.LogDebugf(s.ctx, "[Save] %v", msg)

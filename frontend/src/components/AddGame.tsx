@@ -45,6 +45,11 @@ const AddGame = () => {
 
   const toggleDialog = () => {
     setIsDialogOpen(!isDialogOpen);
+    if (!isDialogOpen) {
+      setTimeout(() => {
+        setFocus("Name");
+      }, 400);
+    }
     reset();
   };
 

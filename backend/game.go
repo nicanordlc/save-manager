@@ -60,6 +60,16 @@ func (g *Game) RemoveGame(id uuid.UUID) {
 	g.JsonGame.Data = newList
 	g.updateJson()
 	g.logf("Deleted: %v", id)
+	g.removeGameDir(id)
+}
+
+func (g *Game) removeGameDir(gameID uuid.UUID) error {
+	gameDir, err := GetGameDir(gameID)
+	if err != nil {
+		return err
+	}
+	os.RemoveAll(gameDir)
+	return nil
 }
 
 func (g *Game) ReadGames() (*JsonGame, error) {

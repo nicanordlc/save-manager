@@ -26,11 +26,15 @@ type FormInputs = {
 };
 
 const Game = () => {
-  const { id = "" } = useParams<GameQueryParams>();
-  const { query: querySaves, addSave } = useSave({ GameID: id });
+  const { id: gameID = "" } = useParams<GameQueryParams>();
+  const {
+    query: querySaves,
+    addSave,
+    removeSave,
+  } = useSave({ GameID: gameID });
   const { query: queryGame } = useGame<GameSingle>({
     queryKey: "game",
-    queryArgs: { ID: id },
+    queryArgs: { ID: gameID },
   });
   const {
     register,
@@ -40,14 +44,13 @@ const Game = () => {
     formState: { errors: formErrors },
   } = useForm<FormInputs>();
 
-  const handleSave = (name: string, gameID: string) =>
-    addSave({ Name: name, GameID: gameID });
+  const handleSave = (name: string) => addSave({ Name: name, GameID: gameID });
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     LogDebug("== Form Submit [Save]");
     LogDebug(JSON.stringify(data, null, 2));
 
-    await handleSave(data.Name, id);
+    await handleSave(data.Name);
 
     reset();
     clearErrors();
@@ -57,8 +60,9 @@ const Game = () => {
     LogDebug(`Loading: ${saveId}...`);
   };
 
-  const handleDelete = (saveId: string) => {
-    LogDebug(`Delete: ${saveId}`);
+  const handleDelete = (saveID: string) => {
+    LogDebug(`Delete: ${saveID}`);
+    return removeSave({ ID: saveID, GameID: gameID });
   };
 
   const handleQuickSave = () => {
@@ -76,6 +80,7 @@ const Game = () => {
   useMenuMiddleItem(
     <LightningSave onSave={handleQuickSave} onLoad={handleQuickLoad} />,
   );
+
   return (
     <main className="flex grow flex-col">
       <Typography className="mb-4 break-words" variant="h1">

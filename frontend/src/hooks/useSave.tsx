@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AddSave, GetSaves } from "@wailsjs/go/backend/Save";
+import { AddSave, GetSaves, RemoveSave } from "@wailsjs/go/backend/Save";
 
 export type SaveSingle = {
   ID: string;
@@ -27,7 +27,13 @@ const useSave = (props?: Pick<SaveSingle, "GameID">) => {
       AddSave(s.Name, s.GameID),
   });
 
-  return { query, addSave };
+  const { mutateAsync: removeSave } = useMutation({
+    onSuccess: invalidateSavesQuery,
+    mutationFn: (s: Pick<SaveSingle, "ID" | "GameID">) =>
+      RemoveSave(s.ID, s.GameID),
+  });
+
+  return { query, addSave, removeSave };
 };
 
 export default useSave;
