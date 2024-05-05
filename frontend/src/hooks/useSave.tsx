@@ -1,5 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AddSave, GetSaves, RemoveSave } from "@wailsjs/go/backend/Save";
+import {
+  AddQuicksave,
+  AddSave,
+  GetQuickSave,
+  GetSaves,
+  RemoveQuickSave,
+  RemoveSave,
+} from "@wailsjs/go/backend/Save";
 
 export type SaveSingle = {
   ID: string;
@@ -9,17 +16,26 @@ export type SaveSingle = {
 };
 
 const QUERY_KEY = "saves";
+const QUERY_KEY_QUICK_SAVE = "quicksave";
 
 const useSave = (props?: Pick<SaveSingle, "GameID">) => {
   const queryClient = useQueryClient();
 
-  const query = useQuery<SaveSingle[]>({
+  const querySaves = useQuery<SaveSingle[]>({
     queryKey: [QUERY_KEY],
     queryFn: () => GetSaves(props?.GameID),
   });
 
+  const queryQuickSave = useQuery<boolean>({
+    queryKey: [QUERY_KEY_QUICK_SAVE],
+    queryFn: GetQuickSave,
+  });
+
   const invalidateSavesQuery = () =>
     queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+
+  const invalidateQuickSaveQuery = () =>
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEY_QUICK_SAVE] });
 
   const { mutateAsync: addSave } = useMutation({
     onSuccess: invalidateSavesQuery,
@@ -33,7 +49,24 @@ const useSave = (props?: Pick<SaveSingle, "GameID">) => {
       RemoveSave(s.ID, s.GameID),
   });
 
-  return { query, addSave, removeSave };
+  const { mutateAsync: addQuickSave } = useMutation({
+    onSuccess: invalidateQuickSaveQuery,
+    mutationFn: (s: Pick<SaveSingle, "GameID">) => AddQuicksave(s.GameID),
+  });
+
+  const { mutateAsync: removeQuickSave } = useMutation({
+    onSuccess: invalidateQuickSaveQuery,
+    mutationFn: (s: Pick<SaveSingle, "GameID">) => RemoveQuickSave(s.GameID),
+  });
+
+  return {
+    querySaves,
+    queryQuickSave,
+    addSave,
+    removeSave,
+    addQuickSave,
+    removeQuickSave,
+  };
 };
 
 export default useSave;

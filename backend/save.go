@@ -20,7 +20,8 @@ type SaveSingle struct {
 }
 
 type JsonSave struct {
-	Data []SaveSingle
+	Data             map[uuid.UUID][]SaveSingle
+	QuickSaveEnabled bool
 }
 
 type Save struct {
@@ -45,7 +46,10 @@ func (s *Save) AddSave(name string, gameID uuid.UUID) uuid.UUID {
 	id := uuid.New()
 	now := time.Now()
 	save := SaveSingle{Name: name, ID: id, GameID: gameID, CreatedAt: now}
-	s.JsonSave.Data = append(s.JsonSave.Data, save)
+	if len(s.JsonSave.Data) < 1 {
+		s.JsonSave.Data = make(map[uuid.UUID][]SaveSingle)
+	}
+	s.JsonSave.Data[gameID] = append(s.JsonSave.Data[gameID], save)
 	s.updateJson()
 	CreateSaveDir(id, gameID)
 	s.logf("Created: %v", id)
@@ -54,15 +58,17 @@ func (s *Save) AddSave(name string, gameID uuid.UUID) uuid.UUID {
 
 func (s *Save) ReadSaves() (*JsonSave, error) {
 	saveJson, err := utils.ReadConfigFrom[JsonSave](s.filename)
-	if err != nil {
-		return saveJson, err
-	}
-	return saveJson, nil
+	return saveJson, err
+}
+
+func (s *Save) GetQuickSave() (bool, error) {
+	saveJson, err := utils.ReadConfigFrom[JsonSave](s.filename)
+	return saveJson.QuickSaveEnabled, err
 }
 
 func (s *Save) GetSaves(gameID uuid.UUID) []SaveSingle {
 	var gameSaves []SaveSingle
-	for _, save := range s.JsonSave.Data {
+	for _, save := range s.JsonSave.Data[gameID] {
 		if save.GameID == gameID {
 			gameSaves = append(gameSaves, save)
 		}
@@ -72,13 +78,17 @@ func (s *Save) GetSaves(gameID uuid.UUID) []SaveSingle {
 
 func (s *Save) RemoveSave(saveID uuid.UUID, gameID uuid.UUID) error {
 	var newList []SaveSingle
-	for _, save := range s.JsonSave.Data {
+	for _, save := range s.JsonSave.Data[gameID] {
 		if save.ID == saveID {
 			continue
 		}
 		newList = append(newList, save)
 	}
-	s.JsonSave.Data = newList
+	if len(newList) < 1 {
+		s.JsonSave.Data = make(map[uuid.UUID][]SaveSingle)
+	} else {
+		s.JsonSave.Data[gameID] = newList
+	}
 	s.updateJson()
 	s.logf("Deleted: %v", saveID)
 	err := s.removeSaveDir(saveID, gameID)
@@ -88,13 +98,61 @@ func (s *Save) RemoveSave(saveID uuid.UUID, gameID uuid.UUID) error {
 	return nil
 }
 
+func (s *Save) RemoveSaveForGame(gameID uuid.UUID) {
+	s.JsonSave.Data = make(map[uuid.UUID][]SaveSingle)
+	s.updateJson()
+}
+
 func (s *Save) removeSaveDir(saveID uuid.UUID, gameID uuid.UUID) error {
 	saveDir, err := GetSaveDir(saveID, gameID)
 	if err != nil {
 		return err
 	}
-	os.Remove(saveDir)
+	os.RemoveAll(saveDir)
 	return nil
+}
+
+func (s *Save) RemoveQuickSave(gameID uuid.UUID) error {
+	s.QuickSaveEnabled = false
+	s.updateJson()
+	s.logf("Deleted quicksave for: %v", gameID)
+	s.removeQuickSaveDir(gameID)
+	return nil
+}
+
+func (s *Save) AddQuicksave(gameID uuid.UUID) error {
+	s.QuickSaveEnabled = true
+	s.updateJson()
+	s.logf("Created quicksave for: %v", gameID)
+	s.createQuickSaveDir(gameID)
+	return nil
+}
+
+func (s *Save) createQuickSaveDir(gameID uuid.UUID) error {
+	quickSaveDir, err := s.getQuickSaveDir(gameID)
+	if err != nil {
+		return err
+	}
+	os.Mkdir(quickSaveDir, os.ModePerm)
+	return nil
+}
+
+func (s *Save) removeQuickSaveDir(gameID uuid.UUID) error {
+	quickSaveDir, err := s.getQuickSaveDir(gameID)
+	if err != nil {
+		return err
+	}
+	os.RemoveAll(quickSaveDir)
+	return nil
+}
+
+func (s *Save) getQuickSaveDir(gameID uuid.UUID) (string, error) {
+	gameDir, err := GetGameDir(gameID)
+	if err != nil {
+		return "", err
+	}
+	quickSaveDir := path.Join(gameDir, "quick-save")
+	return quickSaveDir, nil
 }
 
 func (s *Save) logf(format string, args ...interface{}) {

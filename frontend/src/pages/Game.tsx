@@ -4,6 +4,7 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Chip,
   Input,
   Typography,
 } from "@material-tailwind/react";
@@ -28,10 +29,15 @@ type FormInputs = {
 const Game = () => {
   const { id: gameID = "" } = useParams<GameQueryParams>();
   const {
-    query: querySaves,
+    querySaves,
+    queryQuickSave,
     addSave,
     removeSave,
-  } = useSave({ GameID: gameID });
+    addQuickSave,
+    removeQuickSave,
+  } = useSave({
+    GameID: gameID,
+  });
   const { query: queryGame } = useGame<GameSingle>({
     queryKey: "game",
     queryArgs: { ID: gameID },
@@ -43,13 +49,11 @@ const Game = () => {
     reset,
     formState: { errors: formErrors },
   } = useForm<FormInputs>();
+  const quickSaveEnabled = queryQuickSave.data;
 
   const handleSave = (name: string) => addSave({ Name: name, GameID: gameID });
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    LogDebug("== Form Submit [Save]");
-    LogDebug(JSON.stringify(data, null, 2));
-
     await handleSave(data.Name);
 
     reset();
@@ -65,17 +69,38 @@ const Game = () => {
     return removeSave({ ID: saveID, GameID: gameID });
   };
 
-  const handleQuickSave = () => {
-    LogDebug("...QuickSave");
-  };
+  const handleQuickSave = () => addQuickSave({ GameID: gameID });
 
   const handleQuickLoad = () => {
+    LogDebug(JSON.stringify(queryQuickSave.data, null, 2));
+
     LogDebug("...QuickLoad");
   };
 
   const formatDate = (dateString: string) => {
     return dateString;
   };
+
+  const getQuickSaveChip = () => (
+    <Chip
+      variant="ghost"
+      color={quickSaveEnabled ? "green" : "red"}
+      size="sm"
+      value="Quick Save"
+      onClose={() => removeQuickSave({ GameID: gameID })}
+      icon={
+        <span
+          className={clsx(
+            "mx-auto mt-1 block h-2 w-2 rounded-full content-['']",
+            {
+              "bg-red-900": !quickSaveEnabled,
+              "bg-green-900": quickSaveEnabled,
+            },
+          )}
+        />
+      }
+    />
+  );
 
   useMenuMiddleItem(
     <LightningSave onSave={handleQuickSave} onLoad={handleQuickLoad} />,
@@ -95,7 +120,10 @@ const Game = () => {
           variant="filled"
         >
           <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
-            <Typography color="gray">Manage your saves 👾</Typography>
+            <div className="flex justify-between">
+              <Typography color="gray">Manage your saves 👾</Typography>
+              {getQuickSaveChip()}
+            </div>
 
             <Input
               labelProps={{

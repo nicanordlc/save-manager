@@ -5,6 +5,7 @@ import {
   ReadGames,
   RemoveGame,
 } from "@wailsjs/go/backend/Game";
+import { RemoveSaveForGame } from "@wailsjs/go/backend/Save";
 
 export type GameSingle = {
   ID: string;
@@ -47,7 +48,10 @@ const useGame = <T,>(props?: Partial<UseGame>) => {
 
   const { mutateAsync: removeGame } = useMutation({
     onSuccess: invalidateGamesQuery,
-    mutationFn: (g: Pick<GameSingle, "ID">) => RemoveGame(g.ID),
+    mutationFn: async (g: Pick<GameSingle, "ID">) => {
+      await RemoveGame(g.ID);
+      await RemoveSaveForGame(g.ID);
+    },
   });
 
   const { mutateAsync: addGame } = useMutation({

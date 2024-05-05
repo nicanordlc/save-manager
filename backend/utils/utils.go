@@ -71,6 +71,24 @@ func GetSavesDir() (string, error) {
 	return savesDir, nil
 }
 
+func CreateSaveDir(saveDir string) error {
+	saveDir, err := GetSaveDir(saveDir)
+	if err != nil {
+		return err
+	}
+	os.Mkdir(saveDir, os.ModePerm)
+	return nil
+}
+
+func GetSaveDir(saveDir string) (string, error) {
+	savesDir, err := GetSavesDir()
+	if err != nil {
+		return "", err
+	}
+	newSaveDir := path.Join(savesDir, saveDir)
+	return newSaveDir, nil
+}
+
 func WriteStructTo[T any](filename string, jsonStruct T) error {
 	path, err := getConfigJson(filename)
 	if err != nil {
