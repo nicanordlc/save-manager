@@ -16,3 +16,7 @@ test-frontend:
 
 .PHONY: test
 test: test-backend test-frontend
+
+.PHONY: build-windows
+build-windows:
+	@wails build -platform windows/amd64
