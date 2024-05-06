@@ -29,5 +29,47 @@
         "clear": true,
       }
     },
+    {
+      "label": "build-dev",
+      "type": "shell",
+      "command": "wails build -debug",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": true,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true,
+      }
+    },
+    {
+      "label": "build-windows",
+      "type": "shell",
+      "command": "wails build -platform windows/amd64",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": true,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true,
+      }
+    },
+    {
+      "label": "build-windows-dev",
+      "type": "shell",
+      "command": "wails build -debug -platform windows/amd64",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": true,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true,
+      }
+    },
   ]
 }

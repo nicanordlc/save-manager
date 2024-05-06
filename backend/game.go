@@ -59,8 +59,8 @@ func (g *Game) RemoveGame(id uuid.UUID) {
 	}
 	g.JsonGame.Data = newList
 	g.updateJson()
-	g.logf("Deleted: %v", id)
 	g.removeGameDir(id)
+	g.logf("Deleted: %v", id)
 }
 
 func (g *Game) ReadGames() (*JsonGame, error) {
