@@ -90,7 +90,7 @@ func (s *Save) RemoveSave(saveID uuid.UUID, gameID uuid.UUID) error {
 		newList = append(newList, save)
 	}
 	if len(newList) < 1 {
-		s.JsonSave.Data = make(map[uuid.UUID][]SaveSingle)
+		s.JsonSave.Data[gameID] = make([]SaveSingle, 0)
 	} else {
 		s.JsonSave.Data[gameID] = newList
 	}
