@@ -72,7 +72,9 @@ const Game = () => {
   const handleQuickLoad = () => loadQuickSave({ GameID: gameID });
 
   const formatDate = (dateString: string) => {
-    return dateString;
+    const date = new Date(dateString);
+    const intlDate = new Intl.DateTimeFormat("en-US").format(date);
+    return intlDate;
   };
 
   const getQuickSaveChip = () => (
@@ -148,10 +150,10 @@ const Game = () => {
         <CardBody className="h-0 grow overflow-y-auto border-t-4 p-4">
           {querySaves.data?.map((save) => (
             <div
-              className="flex items-center justify-between even:bg-blue-gray-50/50"
+              className="grid grid-cols-12 items-center justify-between break-all even:bg-blue-gray-50/50"
               key={save.Name}
             >
-              <div className="flex items-center gap-2">
+              <div className="col-span-8 flex items-center gap-2">
                 <Button
                   onClick={() => handleLoad(save.ID)}
                   className="p-3"
@@ -162,7 +164,9 @@ const Game = () => {
                 <Typography>{save.Name}</Typography>
               </div>
 
-              <Typography>{formatDate(save.CreatedAt)}</Typography>
+              <Typography className="col-span-3 px-2">
+                {formatDate(save.CreatedAt)}
+              </Typography>
 
               <Button
                 onClick={() => handleDelete(save.ID)}
