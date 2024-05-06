@@ -109,7 +109,7 @@ const Game = () => {
   return (
     <main className="flex grow flex-col">
       <Typography className="mb-4 break-words" variant="h1">
-        {queryGame.data?.Name}
+        {queryGame.data?.Name ?? ""}
       </Typography>
 
       <Card className="w-full grow border-4 shadow-none">
@@ -148,35 +148,39 @@ const Game = () => {
         </CardHeader>
 
         <CardBody className="h-0 grow overflow-y-auto border-t-4 p-4">
-          {querySaves.data?.map((save) => (
-            <div
-              className="grid grid-cols-12 items-center justify-between break-all even:bg-blue-gray-50/50"
-              key={save.Name}
-            >
-              <div className="col-span-8 flex items-center gap-2">
+          {(querySaves.data?.length ?? 0) < 1 ? (
+            <div />
+          ) : (
+            querySaves.data?.map((save) => (
+              <div
+                className="grid grid-cols-12 items-center justify-between break-all even:bg-blue-gray-50/50"
+                key={save.Name}
+              >
+                <div className="col-span-8 flex items-center gap-2">
+                  <Button
+                    onClick={() => handleLoad(save.ID)}
+                    className="p-3"
+                    variant="text"
+                  >
+                    <FaUpload size={15} />
+                  </Button>
+                  <Typography>{save.Name}</Typography>
+                </div>
+
+                <Typography className="col-span-3 px-2">
+                  {formatDate(save.CreatedAt)}
+                </Typography>
+
                 <Button
-                  onClick={() => handleLoad(save.ID)}
+                  onClick={() => handleDelete(save.ID)}
                   className="p-3"
                   variant="text"
                 >
-                  <FaUpload size={15} />
+                  <FaTrash size={15} />
                 </Button>
-                <Typography>{save.Name}</Typography>
               </div>
-
-              <Typography className="col-span-3 px-2">
-                {formatDate(save.CreatedAt)}
-              </Typography>
-
-              <Button
-                onClick={() => handleDelete(save.ID)}
-                className="p-3"
-                variant="text"
-              >
-                <FaTrash size={15} />
-              </Button>
-            </div>
-          ))}
+            ))
+          )}
         </CardBody>
       </Card>
     </main>
