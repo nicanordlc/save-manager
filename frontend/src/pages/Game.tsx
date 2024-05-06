@@ -11,7 +11,6 @@ import {
 import { useParams } from "react-router-dom";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import clsx from "clsx";
-import { LogDebug } from "@wailsjs/runtime/runtime";
 import { FaTrash, FaUpload } from "react-icons/fa6";
 import useGame, { type GameSingle } from "@/hooks/useGame";
 import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
@@ -35,6 +34,8 @@ const Game = () => {
     removeSave,
     addQuickSave,
     removeQuickSave,
+    loadSave,
+    loadQuickSave,
   } = useSave({
     GameID: gameID,
   });
@@ -60,22 +61,15 @@ const Game = () => {
     clearErrors();
   };
 
-  const handleLoad = (saveId: string) => {
-    LogDebug(`Loading: ${saveId}...`);
-  };
+  const handleLoad = (saveId: string) =>
+    loadSave({ ID: saveId, GameID: gameID });
 
-  const handleDelete = (saveID: string) => {
-    LogDebug(`Delete: ${saveID}`);
-    return removeSave({ ID: saveID, GameID: gameID });
-  };
+  const handleDelete = (saveID: string) =>
+    removeSave({ ID: saveID, GameID: gameID });
 
   const handleQuickSave = () => addQuickSave({ GameID: gameID });
 
-  const handleQuickLoad = () => {
-    LogDebug(JSON.stringify(queryQuickSave.data, null, 2));
-
-    LogDebug("...QuickLoad");
-  };
+  const handleQuickLoad = () => loadQuickSave({ GameID: gameID });
 
   const formatDate = (dateString: string) => {
     return dateString;
@@ -83,6 +77,10 @@ const Game = () => {
 
   const getQuickSaveChip = () => (
     <Chip
+      className={clsx({
+        "[&>button]:pointer-events-none [&>button]:opacity-50":
+          !quickSaveEnabled,
+      })}
       variant="ghost"
       color={quickSaveEnabled ? "green" : "red"}
       size="sm"

@@ -4,6 +4,8 @@ import {
   AddSave,
   GetQuickSave,
   GetSaves,
+  LoadQuickSave,
+  LoadSave,
   RemoveQuickSave,
   RemoveSave,
 } from "@wailsjs/go/backend/Save";
@@ -28,7 +30,7 @@ const useSave = (props?: Pick<SaveSingle, "GameID">) => {
 
   const queryQuickSave = useQuery<boolean>({
     queryKey: [QUERY_KEY_QUICK_SAVE],
-    queryFn: GetQuickSave,
+    queryFn: () => GetQuickSave(props?.GameID),
   });
 
   const invalidateSavesQuery = () =>
@@ -59,13 +61,24 @@ const useSave = (props?: Pick<SaveSingle, "GameID">) => {
     mutationFn: (s: Pick<SaveSingle, "GameID">) => RemoveQuickSave(s.GameID),
   });
 
+  const { mutateAsync: loadSave } = useMutation({
+    mutationFn: (s: Pick<SaveSingle, "ID" | "GameID">) =>
+      LoadSave(s.ID, s.GameID),
+  });
+
+  const { mutateAsync: loadQuickSave } = useMutation({
+    mutationFn: (s: Pick<SaveSingle, "GameID">) => LoadQuickSave(s.GameID),
+  });
+
   return {
     querySaves,
     queryQuickSave,
     addSave,
-    removeSave,
     addQuickSave,
+    removeSave,
     removeQuickSave,
+    loadSave,
+    loadQuickSave,
   };
 };
 

@@ -2,6 +2,7 @@ package backend
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -20,13 +21,13 @@ type SaveSingle struct {
 }
 
 type JsonSave struct {
-	Data             map[uuid.UUID][]SaveSingle
-	QuickSaveEnabled bool
+	Data map[uuid.UUID][]SaveSingle
 }
 
 type Save struct {
 	ctx      context.Context
 	filename string
+	Game     *Game
 	JsonSave
 }
 
@@ -52,18 +53,22 @@ func (s *Save) AddSave(name string, gameID uuid.UUID) uuid.UUID {
 	s.JsonSave.Data[gameID] = append(s.JsonSave.Data[gameID], save)
 	s.updateJson()
 	CreateSaveDir(id, gameID)
+	s.copyGameContent(gameID, id)
 	s.logf("Created: %v", id)
 	return id
+}
+
+func (s *Save) LoadSave(saveID, gameID uuid.UUID) error {
+	err := s.copySaveContent(saveID, gameID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *Save) ReadSaves() (*JsonSave, error) {
 	saveJson, err := utils.ReadConfigFrom[JsonSave](s.filename)
 	return saveJson, err
-}
-
-func (s *Save) GetQuickSave() (bool, error) {
-	saveJson, err := utils.ReadConfigFrom[JsonSave](s.filename)
-	return saveJson.QuickSaveEnabled, err
 }
 
 func (s *Save) GetSaves(gameID uuid.UUID) []SaveSingle {
@@ -103,6 +108,51 @@ func (s *Save) RemoveSaveForGame(gameID uuid.UUID) {
 	s.updateJson()
 }
 
+func (s *Save) copyGameContent(gameID, saveID uuid.UUID) error {
+	savePath, gamePath, err := s.getSaveAndGameContentPath(saveID, gameID)
+	if err != nil {
+		return err
+	}
+	err = utils.CopyDir(gamePath, savePath)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Save) copySaveContent(saveID, gameID uuid.UUID) error {
+	savePath, gamePath, err := s.getSaveAndGameContentPath(saveID, gameID)
+	if err != nil {
+		return err
+	}
+	err = utils.CopyDir(savePath, gamePath)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Save) getGameContentPath(gameID uuid.UUID) (string, error) {
+	for _, game := range s.Game.Data {
+		if game.ID == gameID {
+			return game.SavePath, nil
+		}
+	}
+	return "", errors.New("no game content found")
+}
+
+func (s *Save) getSaveAndGameContentPath(saveID, gameID uuid.UUID) (string, string, error) {
+	gameContentPath, err := s.getGameContentPath(gameID)
+	if err != nil {
+		return "", "", err
+	}
+	saveContentPath, err := GetSaveDir(saveID, gameID)
+	if err != nil {
+		return "", "", err
+	}
+	return saveContentPath, gameContentPath, nil
+}
+
 func (s *Save) removeSaveDir(saveID uuid.UUID, gameID uuid.UUID) error {
 	saveDir, err := GetSaveDir(saveID, gameID)
 	if err != nil {
@@ -110,49 +160,6 @@ func (s *Save) removeSaveDir(saveID uuid.UUID, gameID uuid.UUID) error {
 	}
 	os.RemoveAll(saveDir)
 	return nil
-}
-
-func (s *Save) RemoveQuickSave(gameID uuid.UUID) error {
-	s.QuickSaveEnabled = false
-	s.updateJson()
-	s.logf("Deleted quicksave for: %v", gameID)
-	s.removeQuickSaveDir(gameID)
-	return nil
-}
-
-func (s *Save) AddQuicksave(gameID uuid.UUID) error {
-	s.QuickSaveEnabled = true
-	s.updateJson()
-	s.logf("Created quicksave for: %v", gameID)
-	s.createQuickSaveDir(gameID)
-	return nil
-}
-
-func (s *Save) createQuickSaveDir(gameID uuid.UUID) error {
-	quickSaveDir, err := s.getQuickSaveDir(gameID)
-	if err != nil {
-		return err
-	}
-	os.Mkdir(quickSaveDir, os.ModePerm)
-	return nil
-}
-
-func (s *Save) removeQuickSaveDir(gameID uuid.UUID) error {
-	quickSaveDir, err := s.getQuickSaveDir(gameID)
-	if err != nil {
-		return err
-	}
-	os.RemoveAll(quickSaveDir)
-	return nil
-}
-
-func (s *Save) getQuickSaveDir(gameID uuid.UUID) (string, error) {
-	gameDir, err := GetGameDir(gameID)
-	if err != nil {
-		return "", err
-	}
-	quickSaveDir := path.Join(gameDir, "quick-save")
-	return quickSaveDir, nil
 }
 
 func (s *Save) logf(format string, args ...interface{}) {
