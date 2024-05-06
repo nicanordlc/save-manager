@@ -108,6 +108,15 @@ func (s *Save) RemoveSaveForGame(gameID uuid.UUID) {
 	s.updateJson()
 }
 
+func (s *Save) OpenSaveDir(saveID, gameID uuid.UUID) error {
+	saveDir, err := GetSaveDir(saveID, gameID)
+	if err != nil {
+		return err
+	}
+	utils.OpenPath(s.ctx, saveDir)
+	return nil
+}
+
 func (s *Save) copyGameContent(gameID, saveID uuid.UUID) error {
 	savePath, gamePath, err := s.getSaveAndGameContentPath(saveID, gameID)
 	if err != nil {

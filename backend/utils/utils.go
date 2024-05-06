@@ -7,6 +7,8 @@ import (
 	"io/fs"
 	"os"
 	"path"
+
+	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 func ReadConfigFrom[T any](filename string) (*T, error) {
@@ -154,6 +156,11 @@ func GetAppConfigDir() (string, error) {
 
 type StartAble interface {
 	Startup(ctx context.Context)
+}
+
+func OpenPath(ctx context.Context, path string) error {
+	rt.BrowserOpenURL(ctx, path)
+	return nil
 }
 
 func StartApps(l []StartAble) func(ctx context.Context) {

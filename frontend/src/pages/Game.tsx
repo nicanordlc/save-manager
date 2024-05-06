@@ -11,7 +11,9 @@ import {
 import { useParams } from "react-router-dom";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import clsx from "clsx";
-import { FaTrash, FaUpload } from "react-icons/fa6";
+import { FaFolderOpen, FaTrash, FaUpload } from "react-icons/fa6";
+import { OpenSaveDir } from "@wailsjs/go/backend/Save";
+import { OpenGameDir } from "@wailsjs/go/backend/Game";
 import useGame, { type GameSingle } from "@/hooks/useGame";
 import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
 import LightningSave from "@/components/LightningSave";
@@ -67,6 +69,11 @@ const Game = () => {
   const handleDelete = (saveID: string) =>
     removeSave({ ID: saveID, GameID: gameID });
 
+  const handleOpenSaveDirectory = (saveID: string) =>
+    OpenSaveDir(saveID, gameID);
+
+  const handleOpenGameDirectory = () => OpenGameDir(gameID);
+
   const handleQuickSave = () => addQuickSave({ GameID: gameID });
 
   const handleQuickLoad = () => loadQuickSave({ GameID: gameID });
@@ -108,9 +115,19 @@ const Game = () => {
 
   return (
     <main className="flex grow flex-col">
-      <Typography className="mb-4 break-words" variant="h1">
+      <Typography className="break-words" variant="h1">
         {queryGame.data?.Name ?? ""}
       </Typography>
+
+      <div className="mb-2 rounded-full border-4">
+        <Button
+          onClick={() => handleOpenGameDirectory()}
+          className="rounded-bl-[20px] rounded-tl-[20px] p-3"
+          variant="text"
+        >
+          <FaFolderOpen size={15} />
+        </Button>
+      </div>
 
       <Card className="w-full grow border-4 shadow-none">
         <CardHeader
@@ -156,7 +173,7 @@ const Game = () => {
                 className="grid grid-cols-12 items-center justify-between break-all even:bg-blue-gray-50/50"
                 key={save.Name}
               >
-                <div className="col-span-8 flex items-center gap-2">
+                <div className="col-span-7 flex items-center gap-2">
                   <Button
                     onClick={() => handleLoad(save.ID)}
                     className="p-3"
@@ -170,6 +187,14 @@ const Game = () => {
                 <Typography className="col-span-3 px-2">
                   {formatDate(save.CreatedAt)}
                 </Typography>
+
+                <Button
+                  onClick={() => handleOpenSaveDirectory(save.ID)}
+                  className="p-3"
+                  variant="text"
+                >
+                  <FaFolderOpen size={15} />
+                </Button>
 
                 <Button
                   onClick={() => handleDelete(save.ID)}

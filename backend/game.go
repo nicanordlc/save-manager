@@ -63,15 +63,6 @@ func (g *Game) RemoveGame(id uuid.UUID) {
 	g.removeGameDir(id)
 }
 
-func (g *Game) removeGameDir(gameID uuid.UUID) error {
-	gameDir, err := GetGameDir(gameID)
-	if err != nil {
-		return err
-	}
-	os.RemoveAll(gameDir)
-	return nil
-}
-
 func (g *Game) ReadGames() (*JsonGame, error) {
 	gameJson, err := utils.ReadConfigFrom[JsonGame](g.filename)
 	if err != nil {
@@ -88,6 +79,23 @@ func (g *Game) FindGame(id uuid.UUID) GameSingle {
 		return game
 	}
 	return GameSingle{}
+}
+
+func (g *Game) OpenGameDir(gameID uuid.UUID) {
+	for _, game := range g.JsonGame.Data {
+		if game.ID == gameID {
+			utils.OpenPath(g.ctx, game.SavePath)
+		}
+	}
+}
+
+func (g *Game) removeGameDir(gameID uuid.UUID) error {
+	gameDir, err := GetGameDir(gameID)
+	if err != nil {
+		return err
+	}
+	os.RemoveAll(gameDir)
+	return nil
 }
 
 func (g *Game) logf(format string, args ...interface{}) {
