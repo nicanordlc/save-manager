@@ -2,6 +2,7 @@ package backend
 
 import (
 	"context"
+	"runtime"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -31,6 +32,11 @@ func (a *App) OpenDirectoryDialog() string {
 		return ""
 	}
 	return path
+}
+
+func (a *App) GetOS() string {
+	osName := runtime.GOOS
+	return osName
 }
 
 // NewApp creates a new App application struct

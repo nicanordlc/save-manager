@@ -1,6 +1,8 @@
 import clsx from "clsx";
 import { type ReactHTML, type FC } from "react";
 import { Card } from "@material-tailwind/react";
+import { useQuery } from "@tanstack/react-query";
+import { GetOS } from "@wailsjs/go/backend/App";
 import DraggableBar from "@/components/DraggableBar";
 import Menu from "@/components/Menu";
 
@@ -11,9 +13,15 @@ type LayoutProps = {
 };
 
 const Layout: FC<LayoutProps> = (props) => {
+  const { data } = useQuery({
+    queryKey: ["app"],
+    queryFn: GetOS,
+  });
+
+  const isMac = data === "darwin";
   const Container = props.container ?? "div";
   const menuWidth = 60;
-  const dragBarHeight = 28;
+  const dragBarHeight = isMac ? 28 : 0;
 
   return (
     <Container

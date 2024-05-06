@@ -15,8 +15,10 @@ const DraggableBar: FC<DraggableBarProps> = (props) => {
       onDoubleClick={ToggleFullScreen}
       draggable={false}
       className={clsx(
-        "fixed left-0 right-0 top-0 z-10 flex items-center justify-center",
-        "no-select",
+        "no-select fixed left-0 right-0 top-0 z-10 flex items-center justify-center",
+        {
+          hidden: props.height < 1,
+        },
         props.className,
       )}
       style={{

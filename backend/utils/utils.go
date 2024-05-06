@@ -165,7 +165,6 @@ func OpenPath(ctx context.Context, path string) error {
 
 func StartApps(l []StartAble) func(ctx context.Context) {
 	return func(ctx context.Context) {
-
 		for _, app := range l {
 			app.Startup(ctx)
 		}
