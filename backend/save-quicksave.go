@@ -52,6 +52,17 @@ func (s *Save) RemoveQuickSave(gameID uuid.UUID) error {
 	return nil
 }
 
+func (s *Save) OpenQuickSaveDir(gameID uuid.UUID) error {
+	quickSaveDir, err := s.getQuickSaveDir(gameID)
+	if err != nil {
+		return err
+	}
+	if err = utils.OpenPath(s.ctx, quickSaveDir); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *Save) copyGameContentQuickSave(gameID uuid.UUID) error {
 	savePath, err := s.getQuickSaveDir(gameID)
 	if err != nil {

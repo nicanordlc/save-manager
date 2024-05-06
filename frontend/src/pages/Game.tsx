@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import clsx from "clsx";
 import { FaFolderOpen, FaTrash, FaUpload } from "react-icons/fa6";
-import { OpenSaveDir } from "@wailsjs/go/backend/Save";
+import { OpenQuickSaveDir, OpenSaveDir } from "@wailsjs/go/backend/Save";
 import { OpenGameDir } from "@wailsjs/go/backend/Game";
 import useGame, { type GameSingle } from "@/hooks/useGame";
 import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
@@ -78,35 +78,53 @@ const Game = () => {
 
   const handleQuickLoad = () => loadQuickSave({ GameID: gameID });
 
+  const handleOpenQuickSaveDirectory = () => OpenQuickSaveDir(gameID);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const intlDate = new Intl.DateTimeFormat("en-US").format(date);
     return intlDate;
   };
 
+  const chipValue = (
+    <div className="flex items-center gap-2">
+      <span>Quick Save</span>
+
+      <Button
+        onClick={() => handleOpenQuickSaveDirectory()}
+        className="p-0.5"
+        variant="text"
+      >
+        <FaFolderOpen size={12} />
+      </Button>
+    </div>
+  );
+
   const getQuickSaveChip = () => (
-    <Chip
-      className={clsx({
-        "[&>button]:pointer-events-none [&>button]:opacity-50":
-          !quickSaveEnabled,
-      })}
-      variant="ghost"
-      color={quickSaveEnabled ? "green" : "red"}
-      size="sm"
-      value="Quick Save"
-      onClose={() => removeQuickSave({ GameID: gameID })}
-      icon={
-        <span
-          className={clsx(
-            "mx-auto mt-1 block h-2 w-2 rounded-full content-['']",
-            {
-              "bg-red-900": !quickSaveEnabled,
-              "bg-green-900": quickSaveEnabled,
-            },
-          )}
-        />
-      }
-    />
+    <div className="flex gap-4">
+      <Chip
+        className={clsx({
+          "[&_button]:pointer-events-none [&_button]:opacity-50":
+            !quickSaveEnabled,
+        })}
+        variant="ghost"
+        color={quickSaveEnabled ? "green" : "red"}
+        size="sm"
+        value={chipValue}
+        onClose={() => removeQuickSave({ GameID: gameID })}
+        icon={
+          <span
+            className={clsx(
+              "mx-auto mt-1 block h-2 w-2 rounded-full content-['']",
+              {
+                "bg-red-900": !quickSaveEnabled,
+                "bg-green-900": quickSaveEnabled,
+              },
+            )}
+          />
+        }
+      />
+    </div>
   );
 
   useMenuMiddleItem(
