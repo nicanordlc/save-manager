@@ -134,8 +134,10 @@ func (s *Save) copySaveContent(saveID, gameID uuid.UUID) error {
 	if err != nil {
 		return err
 	}
-	err = utils.CopyDir(savePath, gamePath)
-	if err != nil {
+	if err = os.RemoveAll(gamePath); err != nil {
+		return err
+	}
+	if err = utils.CopyDir(savePath, gamePath); err != nil {
 		return err
 	}
 	return nil

@@ -58,6 +58,9 @@ func (s *Save) copyGameContentQuickSave(gameID uuid.UUID) error {
 		return err
 	}
 	gamePath, err := s.getGameContentPath(gameID)
+	if err != nil {
+		return err
+	}
 	err = utils.CopyDir(gamePath, savePath)
 	if err != nil {
 		return err
@@ -71,6 +74,12 @@ func (s *Save) copySaveContentQuickSave(gameID uuid.UUID) error {
 		return err
 	}
 	gamePath, err := s.getGameContentPath(gameID)
+	if err != nil {
+		return err
+	}
+	if err = os.RemoveAll(gamePath); err != nil {
+		return err
+	}
 	err = utils.CopyDir(savePath, gamePath)
 	if err != nil {
 		return err
