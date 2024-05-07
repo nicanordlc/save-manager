@@ -8,6 +8,7 @@ import {
 } from "@material-tailwind/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "@/App";
+import "react-toastify/dist/ReactToastify.css";
 import "@/index.css";
 
 const iconButton: IconButtonStyleTypes = {

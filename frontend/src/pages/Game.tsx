@@ -14,11 +14,12 @@ import clsx from "clsx";
 import { FaFolderOpen, FaTrash, FaUpload } from "react-icons/fa6";
 import { OpenQuickSaveDir, OpenSaveDir } from "@wailsjs/go/backend/Save";
 import { OpenGameDir } from "@wailsjs/go/backend/Game";
-import { EventsOn } from "@wailsjs/runtime/runtime";
+import { toast } from "react-toastify";
 import useGame, { type GameSingle } from "@/hooks/useGame";
 import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
 import LightningSave from "@/components/LightningSave";
 import useSave from "@/hooks/useSave";
+import useEvents from "@/hooks/useEvents";
 
 type GameQueryParams = {
   id: string;
@@ -75,9 +76,15 @@ const Game = () => {
 
   const handleOpenGameDirectory = () => OpenGameDir(gameID);
 
-  const handleQuickSave = () => addQuickSave({ GameID: gameID });
+  const handleQuickSave = async () => {
+    await addQuickSave({ GameID: gameID });
+    toast.info("Saved");
+  };
 
-  const handleQuickLoad = () => loadQuickSave({ GameID: gameID });
+  const handleQuickLoad = async () => {
+    await loadQuickSave({ GameID: gameID });
+    toast.info("Loaded");
+  };
 
   const handleOpenQuickSaveDirectory = () => OpenQuickSaveDir(gameID);
 
@@ -87,15 +94,8 @@ const Game = () => {
     return intlDate;
   };
 
-  EventsOn("quickSave", () => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    handleQuickSave();
-  });
-
-  EventsOn("quickLoad", () => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    handleQuickLoad();
-  });
+  useEvents({ type: "quickSave", cb: handleQuickSave });
+  useEvents({ type: "quickLoad", cb: handleQuickLoad });
 
   const chipValue = (
     <div className="flex items-center gap-2">
