@@ -4,6 +4,7 @@ import {
   FindGame,
   ReadGames,
   RemoveGame,
+  UpdateGame,
 } from "@wailsjs/go/backend/Game";
 import { RemoveSaveForGame } from "@wailsjs/go/backend/Save";
 
@@ -27,7 +28,7 @@ type UseGame = {
 const useGame = <T,>(props?: Partial<UseGame>) => {
   const queryClient = useQueryClient();
 
-  const query = useQuery<T>({
+  const queryGame = useQuery<T>({
     queryKey: [props?.queryKey ?? "games"] as QueryKeys[],
     queryFn: () => {
       switch (props?.queryKey) {
@@ -60,10 +61,16 @@ const useGame = <T,>(props?: Partial<UseGame>) => {
       AddGame(g.Name, g.SavePath),
   });
 
+  const { mutateAsync: updateGame } = useMutation({
+    onSuccess: invalidateGamesQuery,
+    mutationFn: (g: GameSingle) => UpdateGame(g),
+  });
+
   return {
-    query,
+    queryGame,
     removeGame,
     addGame,
+    updateGame,
   };
 };
 

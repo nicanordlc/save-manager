@@ -89,6 +89,23 @@ func (g *Game) OpenGameDir(gameID uuid.UUID) {
 	}
 }
 
+func (g *Game) UpdateGame(props GameSingle) {
+	var gameList []GameSingle
+	for _, gm := range g.JsonGame.Data {
+		if gm.ID == props.ID {
+			if props.Name != "" {
+				gm.Name = props.Name
+			}
+			if props.SavePath != "" {
+				gm.SavePath = props.SavePath
+			}
+		}
+		gameList = append(gameList, gm)
+	}
+	g.JsonGame.Data = gameList
+	g.updateJson()
+}
+
 func (g *Game) removeGameDir(gameID uuid.UUID) error {
 	gameDir, err := GetGameDir(gameID)
 	if err != nil {

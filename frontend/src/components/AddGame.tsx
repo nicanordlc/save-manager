@@ -1,69 +1,14 @@
-import {
-  Button,
-  Checkbox,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  IconButton,
-  Input,
-  Tooltip,
-  Typography,
-} from "@material-tailwind/react";
+import { IconButton, Tooltip, Typography } from "@material-tailwind/react";
 import { useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
-import { FaPlus, FaX } from "react-icons/fa6";
-import { FaDirections } from "react-icons/fa";
-import clsx from "clsx";
-import { OpenDirectoryDialog, OpenFileDialog } from "@wailsjs/go/backend/App";
+import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
-import useGame, { type GameSingle } from "@/hooks/useGame";
-
-type FormInputs = Pick<GameSingle, "Name" | "SavePath">;
+import DialogGameForm from "@/components/DialogGameForm";
+import useGame from "@/hooks/useGame";
 
 const AddGame = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [isFileDialog, setIsFileDialog] = useState<boolean>(false);
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    clearErrors,
-    setFocus,
-    formState: { errors: formErrors },
-  } = useForm<FormInputs>();
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const { addGame } = useGame();
-
-  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    const gameID = (await addGame({
-      Name: data.Name,
-      SavePath: data.SavePath,
-    })) as string;
-
-    navigate(`/game/${gameID}`);
-  };
-
-  const toggleDialog = () => {
-    setIsDialogOpen(!isDialogOpen);
-    if (!isDialogOpen) {
-      setTimeout(() => {
-        setFocus("Name");
-      }, 400);
-    }
-    reset();
-  };
-
-  const handlePath = async () => {
-    const path = isFileDialog
-      ? await OpenFileDialog()
-      : await OpenDirectoryDialog();
-    if (path === "") return;
-    setValue("SavePath", path);
-    clearErrors("SavePath");
-    setFocus("Name");
-  };
 
   const tooltipContent = (
     <Typography className="text-black" variant="small">
@@ -78,87 +23,27 @@ const AddGame = () => {
         placement="right"
         className="border border-blue-gray-50 bg-white shadow-xl shadow-black/10"
       >
-        <IconButton onClick={toggleDialog} data-testid="addGameSave">
+        <IconButton
+          onClick={() => setDialogOpen(!dialogOpen)}
+          data-testid="addGameSave"
+        >
           <FaPlus />
         </IconButton>
       </Tooltip>
-
-      <Dialog open={isDialogOpen} handler={toggleDialog}>
-        <div className="flex items-center justify-between">
-          <DialogHeader className="flex flex-col items-start">
-            <Typography className="mb-1" variant="h4">
-              New Game
-            </Typography>
-          </DialogHeader>
-
-          <IconButton variant="text" onClick={toggleDialog}>
-            <FaX />
-          </IconButton>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogBody>
-            <Typography className="-mt-7 mb-10 " color="gray" variant="lead">
-              Be Ready To Manage Your Saves 💾
-            </Typography>
-
-            <div className="grid gap-6">
-              <Typography className="-mb-1" color="blue-gray" variant="h6">
-                Game Name
-              </Typography>
-
-              <Input
-                labelProps={{
-                  className: "hidden",
-                }}
-                placeholder="name"
-                className={clsx(
-                  "!border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10",
-                  {
-                    "!border-red-300 focus:!border-red-900 focus:!border-t-red-900 focus:!ring-red-900/10":
-                      formErrors.Name,
-                  },
-                )}
-                label="name"
-                {...register("Name", { required: true })}
-              />
-
-              <div className=" flex">
-                <Button
-                  onClick={handlePath}
-                  className={clsx("flex grow items-center justify-center", {
-                    "bg-red-300": formErrors.SavePath,
-                  })}
-                >
-                  <span>SAVE PATH</span>
-                  <FaDirections className="ml-2" />
-                </Button>
-                <input
-                  className="hidden"
-                  {...register("SavePath", { required: true })}
-                />
-
-                <Checkbox
-                  onChange={() => {
-                    setIsFileDialog(!isFileDialog);
-                  }}
-                  label="File"
-                />
-              </div>
-            </div>
-          </DialogBody>
-
-          <DialogFooter className="space-x-2">
-            <Button variant="text" color="gray" onClick={toggleDialog}>
-              cancel
-            </Button>
-
-            <Button type="submit" variant="gradient" color="gray">
-              Create Game
-            </Button>
-          </DialogFooter>
-        </form>
-      </Dialog>
+      <DialogGameForm
+        open={dialogOpen}
+        handler={setDialogOpen}
+        title="New Game"
+        bodyTitle="Be Ready To Manage Your Saves 💾"
+        required={{ Name: true, SavePath: true }}
+        submit={async (data) => {
+          const gameID = (await addGame({
+            Name: data.Name,
+            SavePath: data.SavePath,
+          })) as string;
+          navigate(`/game/${gameID}`);
+        }}
+      />
     </>
   );
 };

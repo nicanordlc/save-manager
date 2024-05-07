@@ -20,11 +20,11 @@ const Saves = () => {
   const [dialogGameName, setDialogGameName] = useState<string>("");
   const [dialogGameID, setDialogGameID] = useState<string>("");
   useMenuMiddleItem(<AddGame />);
-  const { query: queryGames, removeGame } = useGame<TGame>({
+  const { queryGame, removeGame } = useGame<TGame>({
     queryKey: "games",
   });
 
-  const jsonData = queryGames.data?.Data;
+  const jsonData = queryGame.data?.Data;
   const hasGame = Array.isArray(jsonData) ? jsonData.length : jsonData;
 
   if (!hasGame) {
@@ -49,7 +49,7 @@ const Saves = () => {
   return (
     <>
       <ul className={clsx("mb-4", "flex flex-wrap justify-around gap-3")}>
-        {queryGames.data?.Data?.map(({ Name, ID }) => {
+        {queryGame.data?.Data?.map(({ Name, ID }) => {
           return (
             <Game
               key={`game-${Math.random()}`}

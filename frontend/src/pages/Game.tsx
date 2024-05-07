@@ -11,15 +11,17 @@ import {
 import { useParams } from "react-router-dom";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import clsx from "clsx";
-import { FaFolderOpen, FaTrash, FaUpload } from "react-icons/fa6";
+import { FaFolderOpen, FaPencil, FaTrash, FaUpload } from "react-icons/fa6";
 import { OpenQuickSaveDir, OpenSaveDir } from "@wailsjs/go/backend/Save";
 import { OpenGameDir } from "@wailsjs/go/backend/Game";
 import { toast } from "react-toastify";
+import { useState } from "react";
 import useGame, { type GameSingle } from "@/hooks/useGame";
 import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
 import LightningSave from "@/components/LightningSave";
 import useSave from "@/hooks/useSave";
 import useEvents from "@/hooks/useEvents";
+import DialogGameForm from "@/components/DialogGameForm";
 
 type GameQueryParams = {
   id: string;
@@ -30,6 +32,7 @@ type FormInputs = {
 };
 
 const Game = () => {
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const { id: gameID = "" } = useParams<GameQueryParams>();
   const {
     querySaves,
@@ -43,7 +46,7 @@ const Game = () => {
   } = useSave({
     GameID: gameID,
   });
-  const { query: queryGame } = useGame<GameSingle>({
+  const { queryGame, updateGame } = useGame<GameSingle>({
     queryKey: "game",
     queryArgs: { ID: gameID },
   });
@@ -156,6 +159,14 @@ const Game = () => {
         >
           <FaFolderOpen size={15} />
         </Button>
+
+        <Button
+          onClick={() => setDialogOpen(true)}
+          className="p-3"
+          variant="text"
+        >
+          <FaPencil size={15} />
+        </Button>
       </div>
 
       <Card className="w-full grow border-4 shadow-none">
@@ -237,6 +248,23 @@ const Game = () => {
           )}
         </CardBody>
       </Card>
+      <DialogGameForm
+        open={dialogOpen}
+        handler={setDialogOpen}
+        title="Edit Game"
+        defaultValues={{
+          Name: queryGame.data?.Name,
+          SavePath: queryGame.data?.SavePath,
+        }}
+        submit={async (data) => {
+          await updateGame({
+            ID: gameID,
+            Name: data.Name,
+            SavePath: data.SavePath,
+          });
+          setDialogOpen(false);
+        }}
+      />
     </main>
   );
 };
