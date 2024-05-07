@@ -2,7 +2,6 @@ import {
   Badge,
   Button,
   Card,
-  CardBody,
   CardHeader,
   Typography,
 } from "@material-tailwind/react";
@@ -46,27 +45,27 @@ const Game: FC<GameProps> = (props) => {
 
   return (
     <li>
-      <Card className="mt-4 w-60 border-4 shadow-none">
-        <Link to={`/game/${props.ID}`}>
-          <CardHeader
-            ref={headerRef}
-            className="-mt-3 mb-0 grid h-8 place-items-center"
-          >
-            {getHeader(props.Name)}
-          </CardHeader>
-        </Link>
-
-        <Badge
-          color="orange"
-          className="m-0 p-0"
-          placement="bottom-end"
-          content={getBadgeContent()}
-        >
-          <CardBody className="p-2">
-            <Typography className="mb-2">Status bar</Typography>
-          </CardBody>
-        </Badge>
-      </Card>
+      <Badge
+        color="orange"
+        className="m-0 p-0"
+        placement="bottom-end"
+        content={getBadgeContent()}
+      >
+        <Card className="w-60 border-4 shadow-none">
+          <Link to={`/game/${props.ID}`}>
+            <CardHeader
+              floated={false}
+              shadow={false}
+              // variant="filled"
+              ref={headerRef}
+              className="m-2 rounded-lg"
+              // className="-mt-3 mb-0 grid h-8 place-items-center"
+            >
+              {getHeader(props.Name)}
+            </CardHeader>
+          </Link>
+        </Card>
+      </Badge>
     </li>
   );
 };
