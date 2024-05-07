@@ -60,10 +60,8 @@ const Game: FC<GameProps> = (props) => {
             <CardHeader
               floated={false}
               shadow={false}
-              // variant="filled"
               ref={headerRef}
               className="m-2 rounded-lg"
-              // className="-mt-3 mb-0 grid h-8 place-items-center"
             >
               {getHeader(props.Name)}
             </CardHeader>
