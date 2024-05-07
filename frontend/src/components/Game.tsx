@@ -28,7 +28,11 @@ const Game: FC<GameProps> = (props) => {
 
   const getHeader = (title: string) => {
     const content = (
-      <Typography ref={typographyRef} className="px-2" variant="h6">
+      <Typography
+        ref={typographyRef}
+        className="inline-block px-2"
+        variant="h6"
+      >
         {title}
       </Typography>
     );
