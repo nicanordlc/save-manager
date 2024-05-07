@@ -25,6 +25,16 @@ func (m *AppMenu) addSaveManagerMenu() {
 	})
 }
 
+func (m *AppMenu) addSavesMenu() {
+	fileMenu := m.Menu.AddSubmenu("Saves")
+	fileMenu.AddText("Quicksave", keys.CmdOrCtrl("s"), func(_ *menu.CallbackData) {
+		rt.EventsEmit(m.ctx, "quickSave")
+	})
+	fileMenu.AddText("Quickload", keys.CmdOrCtrl("l"), func(_ *menu.CallbackData) {
+		rt.EventsEmit(m.ctx, "quickLoad")
+	})
+}
+
 func (m *AppMenu) addMacMenu() {
 	if runtime.GOOS == "darwin" {
 		m.Menu.Append(menu.EditMenu())
@@ -36,6 +46,7 @@ func NewMenu() *AppMenu {
 
 	appMenu := AppMenu{Menu: newMenu}
 	appMenu.addSaveManagerMenu()
+	appMenu.addSavesMenu()
 	appMenu.addMacMenu()
 
 	return &appMenu

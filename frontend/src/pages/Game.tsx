@@ -14,6 +14,7 @@ import clsx from "clsx";
 import { FaFolderOpen, FaTrash, FaUpload } from "react-icons/fa6";
 import { OpenQuickSaveDir, OpenSaveDir } from "@wailsjs/go/backend/Save";
 import { OpenGameDir } from "@wailsjs/go/backend/Game";
+import { EventsOn } from "@wailsjs/runtime/runtime";
 import useGame, { type GameSingle } from "@/hooks/useGame";
 import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
 import LightningSave from "@/components/LightningSave";
@@ -85,6 +86,16 @@ const Game = () => {
     const intlDate = new Intl.DateTimeFormat("en-US").format(date);
     return intlDate;
   };
+
+  EventsOn("quickSave", () => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    handleQuickSave();
+  });
+
+  EventsOn("quickLoad", () => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    handleQuickLoad();
+  });
 
   const chipValue = (
     <div className="flex items-center gap-2">
