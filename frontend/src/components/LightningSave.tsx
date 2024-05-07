@@ -14,7 +14,7 @@ const LightningSave = (props: LightningSaveProps) => {
   );
 
   return (
-    <div className="group relative flex flex-col items-center gap-1">
+    <div className="relative flex flex-col items-center gap-1">
       <Tooltip
         content={getTooltipContent("Save")}
         placement="right"
@@ -22,7 +22,7 @@ const LightningSave = (props: LightningSaveProps) => {
       >
         <IconButton
           onClick={() => props.onSave()}
-          className="!absolute top-1 -z-10 bg-green-700 group-hover:group-first:top-0 group-hover:group-first:-translate-y-full"
+          className="top-1 bg-green-700 "
           size="md"
         >
           <FaDownload />
@@ -53,7 +53,7 @@ const LightningSave = (props: LightningSaveProps) => {
           onClick={() => {
             props.onLoad();
           }}
-          className="!absolute bottom-1 -z-10 bg-red-700 group-hover:group-last:bottom-0 group-hover:group-last:translate-y-full"
+          className="bottom-1 bg-red-700 "
           size="md"
         >
           <FaUpload />
