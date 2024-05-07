@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   Dialog,
   DialogBody,
   DialogFooter,
@@ -14,7 +15,7 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { FaPlus, FaX } from "react-icons/fa6";
 import { FaDirections } from "react-icons/fa";
 import clsx from "clsx";
-import { OpenDirectoryDialog } from "@wailsjs/go/backend/App";
+import { OpenDirectoryDialog, OpenFileDialog } from "@wailsjs/go/backend/App";
 import { useNavigate } from "react-router-dom";
 import useGame, { type GameSingle } from "@/hooks/useGame";
 
@@ -22,6 +23,7 @@ type FormInputs = Pick<GameSingle, "Name" | "SavePath">;
 
 const AddGame = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [isFileDialog, setIsFileDialog] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -54,7 +56,9 @@ const AddGame = () => {
   };
 
   const handlePath = async () => {
-    const path = await OpenDirectoryDialog();
+    const path = isFileDialog
+      ? await OpenFileDialog()
+      : await OpenDirectoryDialog();
     if (path === "") return;
     setValue("SavePath", path);
     clearErrors("SavePath");
@@ -119,19 +123,28 @@ const AddGame = () => {
                 {...register("Name", { required: true })}
               />
 
-              <Button
-                onClick={handlePath}
-                className={clsx("flex items-center justify-center", {
-                  "bg-red-300": formErrors.SavePath,
-                })}
-              >
-                PATH
-                <FaDirections className="ml-2" />
-              </Button>
-              <input
-                className="hidden"
-                {...register("SavePath", { required: true })}
-              />
+              <div className=" flex">
+                <Button
+                  onClick={handlePath}
+                  className={clsx("flex grow items-center justify-center", {
+                    "bg-red-300": formErrors.SavePath,
+                  })}
+                >
+                  <span>SAVE PATH</span>
+                  <FaDirections className="ml-2" />
+                </Button>
+                <input
+                  className="hidden"
+                  {...register("SavePath", { required: true })}
+                />
+
+                <Checkbox
+                  onChange={() => {
+                    setIsFileDialog(!isFileDialog);
+                  }}
+                  label="File"
+                />
+              </div>
             </div>
           </DialogBody>
 

@@ -34,6 +34,14 @@ func (a *App) OpenDirectoryDialog() string {
 	return path
 }
 
+func (a *App) OpenFileDialog() string {
+	path, err := rt.OpenFileDialog(a.ctx, rt.OpenDialogOptions{})
+	if err != nil {
+		return ""
+	}
+	return path
+}
+
 func (a *App) GetOS() string {
 	osName := runtime.GOOS
 	return osName

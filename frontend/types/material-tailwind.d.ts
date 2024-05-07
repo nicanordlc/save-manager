@@ -6,4 +6,8 @@ declare module "@material-tailwind/react" {
   export interface InputProps {
     crossOrigin?: unknown;
   }
+
+  export interface CheckboxProps {
+    crossOrigin?: unknown;
+  }
 }
