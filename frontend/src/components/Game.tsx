@@ -26,7 +26,7 @@ const Game: FC<GameProps> = (props) => {
     setShouldMarquee(typographyWidth > headerWidth);
   }, []);
 
-  const getHeader = (title: string) => {
+  const marquee = (title: string) => {
     const content = (
       <Typography
         ref={typographyRef}
@@ -39,21 +39,17 @@ const Game: FC<GameProps> = (props) => {
     return shouldMarquee ? <Marquee speed={25}>{content}</Marquee> : content;
   };
 
-  const getBadgeContent = () => {
-    return (
-      <Button className="bg-transparent p-[6px]" onClick={props.remove}>
-        <FaX size={10} />
-      </Button>
-    );
-  };
-
   return (
     <li>
       <Badge
         color="orange"
         className="m-0 p-0"
         placement="bottom-end"
-        content={getBadgeContent()}
+        content={
+          <Button className="bg-transparent p-[6px]" onClick={props.remove}>
+            <FaX size={10} />
+          </Button>
+        }
       >
         <Card className="w-60 border-4 shadow-none">
           <Link to={`/game/${props.ID}`}>
@@ -63,7 +59,7 @@ const Game: FC<GameProps> = (props) => {
               ref={headerRef}
               className="m-2 rounded-lg"
             >
-              {getHeader(props.Name)}
+              {marquee(props.Name)}
             </CardHeader>
           </Link>
         </Card>
