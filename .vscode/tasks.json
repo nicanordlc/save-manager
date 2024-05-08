@@ -46,7 +46,7 @@
     {
       "label": "build-windows",
       "type": "shell",
-      "command": "wails build -platform windows/amd64",
+      "command": "rm -rf ./build/windows/icon.ico && wails build -platform windows/amd64",
       "problemMatcher": [],
       "presentation": {
         "echo": true,
