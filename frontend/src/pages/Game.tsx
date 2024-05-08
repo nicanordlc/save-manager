@@ -15,7 +15,7 @@ import { FaFolderOpen, FaPencil, FaTrash, FaUpload } from "react-icons/fa6";
 import { OpenQuickSaveDir, OpenSaveDir } from "@wailsjs/go/backend/Save";
 import { OpenGameDir } from "@wailsjs/go/backend/Game";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import useGame, { type GameSingle } from "@/hooks/useGame";
 import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
 import LightningSave from "@/components/LightningSave";
@@ -79,15 +79,15 @@ const Game = () => {
 
   const handleOpenGameDirectory = () => OpenGameDir(gameID);
 
-  const handleQuickSave = async () => {
+  const handleQuickSave = useCallback(async () => {
     await addQuickSave({ GameID: gameID });
     toast.info("Saved");
-  };
+  }, [addQuickSave, gameID]);
 
-  const handleQuickLoad = async () => {
+  const handleQuickLoad = useCallback(async () => {
     await loadQuickSave({ GameID: gameID });
     toast.info("Loaded");
-  };
+  }, [loadQuickSave, gameID]);
 
   const handleOpenQuickSaveDirectory = () => OpenQuickSaveDir(gameID);
 

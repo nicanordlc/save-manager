@@ -24,6 +24,9 @@ const App = () => {
         theme="dark"
         transition={Flip}
         pauseOnFocusLoss={false}
+        pauseOnHover={false}
+        hideProgressBar
+        closeButton={false}
       />
     </>
   );
