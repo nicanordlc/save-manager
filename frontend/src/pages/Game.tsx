@@ -68,8 +68,10 @@ const Game = () => {
     clearErrors();
   };
 
-  const handleLoad = (saveId: string) =>
-    loadSave({ ID: saveId, GameID: gameID });
+  const handleLoad = async (saveId: string) => {
+    await loadSave({ ID: saveId, GameID: gameID });
+    toast.info("Loaded");
+  };
 
   const handleDelete = (saveID: string) =>
     removeSave({ ID: saveID, GameID: gameID });
