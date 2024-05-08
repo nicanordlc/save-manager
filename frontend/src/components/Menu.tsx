@@ -1,4 +1,4 @@
-import { IconButton } from "@material-tailwind/react";
+import { IconButton, Tooltip, Typography } from "@material-tailwind/react";
 import clsx from "clsx";
 import { type FC } from "react";
 import { Link } from "react-router-dom";
@@ -23,9 +23,19 @@ const Menu: FC<MenuProps> = (props) => {
     >
       <li>
         <Link to="/">
-          <IconButton>
-            <FaSave />
-          </IconButton>
+          <Tooltip
+            content={
+              <Typography className="text-black" variant="small">
+                Saves
+              </Typography>
+            }
+            placement="right"
+            className="border border-blue-gray-50 bg-white shadow-xl shadow-black/10"
+          >
+            <IconButton>
+              <FaSave />
+            </IconButton>
+          </Tooltip>
         </Link>
       </li>
 
@@ -35,9 +45,19 @@ const Menu: FC<MenuProps> = (props) => {
 
       <li>
         <Link to="/settings">
-          <IconButton>
-            <FaGear />
-          </IconButton>
+          <Tooltip
+            content={
+              <Typography className="text-black" variant="small">
+                Settings
+              </Typography>
+            }
+            placement="right"
+            className="border border-blue-gray-50 bg-white shadow-xl shadow-black/10"
+          >
+            <IconButton>
+              <FaGear />
+            </IconButton>
+          </Tooltip>
         </Link>
       </li>
     </menu>

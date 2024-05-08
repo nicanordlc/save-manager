@@ -10,16 +10,14 @@ const AddGame = () => {
   const navigate = useNavigate();
   const { addGame } = useGame();
 
-  const tooltipContent = (
-    <Typography className="text-black" variant="small">
-      Add Game
-    </Typography>
-  );
-
   return (
     <>
       <Tooltip
-        content={tooltipContent}
+        content={
+          <Typography className="text-black" variant="small">
+            Add Game
+          </Typography>
+        }
         placement="right"
         className="border border-blue-gray-50 bg-white shadow-xl shadow-black/10"
       >
