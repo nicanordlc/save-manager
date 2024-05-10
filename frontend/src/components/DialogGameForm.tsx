@@ -22,6 +22,7 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { FaDirections } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { type GameSingle } from "@/hooks/useGame";
+import useSettings from "@/hooks/useSettings";
 
 const TRANSITION_TIMEOUT = 300;
 
@@ -38,7 +39,10 @@ type DialogGameFormProps = {
 };
 
 const DialogGameForm: FC<DialogGameFormProps> = (props) => {
-  const [isFileDialog, setIsFileDialog] = useState<boolean>(false);
+  const { querySettings } = useSettings();
+  const [isFileDialog, setIsFileDialog] = useState<boolean>(
+    querySettings.data?.DefaultSavePathIsFile ?? false,
+  );
   const {
     register,
     handleSubmit,
@@ -146,6 +150,7 @@ const DialogGameForm: FC<DialogGameFormProps> = (props) => {
               />
 
               <Checkbox
+                checked={isFileDialog}
                 onChange={() => {
                   setIsFileDialog(!isFileDialog);
                 }}

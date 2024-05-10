@@ -2,13 +2,16 @@ package backend
 
 import (
 	"context"
+	"os"
 
 	"github.com/cabaalexander/save-manager/backend/utils"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type JsonSettings struct {
-	AlwaysOnTop bool
+	AlwaysOnTop           bool
+	DefaultSavePath       string
+	DefaultSavePathIsFile bool
 }
 
 type Settings struct {
@@ -33,6 +36,14 @@ func (s *Settings) Startup(ctx context.Context) {
 	if settings.AlwaysOnTop {
 		rt.WindowSetAlwaysOnTop(s.ctx, true)
 	}
+	if settings.DefaultSavePath == "" {
+		path, _ := os.UserConfigDir()
+		if path != "" {
+			s.JsonSettings.DefaultSavePath = path
+			s.JsonSettings.DefaultSavePathIsFile = false
+			s.updateJson()
+		}
+	}
 }
 
 func (s *Settings) ToggleAlwaysOnTop() bool {
@@ -51,6 +62,12 @@ func (s *Settings) ReadSettings() (*JsonSettings, error) {
 		return settingsJson, err
 	}
 	return settingsJson, nil
+}
+
+func (s *Settings) SetDefaultSavePath(text string, isFile bool) {
+	s.JsonSettings.DefaultSavePath = text
+	s.JsonSettings.DefaultSavePathIsFile = isFile
+	s.updateJson()
 }
 
 func NewSettings() *Settings {

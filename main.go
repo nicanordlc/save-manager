@@ -23,6 +23,7 @@ func main() {
 	save := backend.NewSave()
 
 	save.Game = game
+	app.Settings = settings
 
 	apps := []utils.StartAble{app, settings, game, save, appMenu}
 	binds := []interface{}{app, settings, game, save}

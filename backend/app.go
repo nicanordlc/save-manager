@@ -9,7 +9,8 @@ import (
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx      context.Context
+	Settings *Settings
 }
 
 // startup is called when the app starts. The context is saved
@@ -27,7 +28,7 @@ func (a *App) ToggleFullScreen() {
 }
 
 func (a *App) OpenDirectoryDialog() string {
-	path, err := rt.OpenDirectoryDialog(a.ctx, rt.OpenDialogOptions{})
+	path, err := rt.OpenDirectoryDialog(a.ctx, a.getDefaultFileOrDirPath())
 	if err != nil {
 		return ""
 	}
@@ -35,11 +36,25 @@ func (a *App) OpenDirectoryDialog() string {
 }
 
 func (a *App) OpenFileDialog() string {
-	path, err := rt.OpenFileDialog(a.ctx, rt.OpenDialogOptions{})
+	path, err := rt.OpenFileDialog(a.ctx, a.getDefaultFileOrDirPath())
 	if err != nil {
 		return ""
 	}
 	return path
+}
+
+func (a *App) getDefaultFileOrDirPath() rt.OpenDialogOptions {
+	defaultPath := a.Settings.DefaultSavePath
+	if a.Settings.JsonSettings.DefaultSavePathIsFile {
+		return rt.OpenDialogOptions{
+			DefaultFilename: defaultPath,
+			Title:           "Select File",
+		}
+	}
+	return rt.OpenDialogOptions{
+		DefaultDirectory: defaultPath,
+		Title:            "Select Directory",
+	}
 }
 
 func (a *App) GetOS() string {
