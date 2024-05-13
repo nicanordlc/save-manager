@@ -12,9 +12,10 @@ import (
 )
 
 type GameSingle struct {
-	ID       uuid.UUID
-	Name     string
-	SavePath string
+	ID             uuid.UUID
+	Name           string
+	SavePath       string
+	SavePathIsFile bool
 }
 
 type JsonGame struct {
@@ -39,9 +40,9 @@ func (g *Game) Startup(ctx context.Context) {
 	g.JsonGame = *game
 }
 
-func (g *Game) AddGame(name string, savePath string) uuid.UUID {
+func (g *Game) AddGame(name, savePath string, isFile bool) uuid.UUID {
 	id := uuid.New()
-	game := GameSingle{ID: id, Name: name, SavePath: savePath}
+	game := GameSingle{ID: id, Name: name, SavePath: savePath, SavePathIsFile: isFile}
 	g.JsonGame.Data = append(g.JsonGame.Data, game)
 	g.updateJson()
 	CreateGameDir(id)
@@ -81,10 +82,10 @@ func (g *Game) FindGame(id uuid.UUID) GameSingle {
 	return GameSingle{}
 }
 
-func (g *Game) OpenGameDir(gameID uuid.UUID) {
+func (g *Game) BrowseGameDir(gameID uuid.UUID) {
 	for _, game := range g.JsonGame.Data {
 		if game.ID == gameID {
-			utils.OpenPath(g.ctx, game.SavePath)
+			utils.BrowsePath(g.ctx, game.SavePath)
 		}
 	}
 }
@@ -99,11 +100,22 @@ func (g *Game) UpdateGame(props GameSingle) {
 			if props.SavePath != "" {
 				gm.SavePath = props.SavePath
 			}
+			gm.SavePathIsFile = props.SavePathIsFile
 		}
 		gameList = append(gameList, gm)
 	}
 	g.JsonGame.Data = gameList
 	g.updateJson()
+}
+
+func (g *Game) OpenDialogDirGame(gameID uuid.UUID) (string, error) {
+	game := g.FindGame(gameID)
+	return utils.OpenDialogDir(g.ctx, game.SavePath, game.SavePathIsFile)
+}
+
+func (g *Game) OpenDialogFileGame(gameID uuid.UUID) (string, error) {
+	game := g.FindGame(gameID)
+	return utils.OpenDialogFile(g.ctx, game.SavePath, game.SavePathIsFile)
 }
 
 func (g *Game) removeGameDir(gameID uuid.UUID) error {

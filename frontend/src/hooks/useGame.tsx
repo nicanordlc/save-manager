@@ -12,6 +12,7 @@ export type GameSingle = {
   ID: string;
   Name: string;
   SavePath: string;
+  SavePathIsFile: boolean;
 };
 
 export type Game = {
@@ -57,8 +58,8 @@ const useGame = <T,>(props?: Partial<UseGame>) => {
 
   const { mutateAsync: addGame } = useMutation({
     onSuccess: invalidateGamesQuery,
-    mutationFn: (g: Pick<GameSingle, "Name" | "SavePath">) =>
-      AddGame(g.Name, g.SavePath),
+    mutationFn: (g: Pick<GameSingle, "Name" | "SavePath" | "SavePathIsFile">) =>
+      AddGame(g.Name, g.SavePath, g.SavePathIsFile),
   });
 
   const { mutateAsync: updateGame } = useMutation({
@@ -67,6 +68,7 @@ const useGame = <T,>(props?: Partial<UseGame>) => {
   });
 
   return {
+    invalidateGamesQuery,
     queryGame,
     removeGame,
     addGame,

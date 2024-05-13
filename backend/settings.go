@@ -64,8 +64,8 @@ func (s *Settings) ReadSettings() (*JsonSettings, error) {
 	return settingsJson, nil
 }
 
-func (s *Settings) SetDefaultSavePath(text string, isFile bool) {
-	s.JsonSettings.DefaultSavePath = text
+func (s *Settings) SetDefaultSavePath(path string, isFile bool) {
+	s.JsonSettings.DefaultSavePath = path
 	s.JsonSettings.DefaultSavePathIsFile = isFile
 	s.updateJson()
 }

@@ -38,6 +38,7 @@ const AddGame = () => {
           const gameID = (await addGame({
             Name: data.Name,
             SavePath: data.SavePath,
+            SavePathIsFile: data.SavePathIsFile,
           })) as string;
           navigate(`/game/${gameID}`);
         }}

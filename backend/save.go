@@ -113,7 +113,7 @@ func (s *Save) OpenSaveDir(saveID, gameID uuid.UUID) error {
 	if err != nil {
 		return err
 	}
-	utils.OpenPath(s.ctx, saveDir)
+	utils.BrowsePath(s.ctx, saveDir)
 	return nil
 }
 
