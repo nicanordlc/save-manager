@@ -1,6 +1,6 @@
 import { Button, Checkbox, Input, Typography } from "@material-tailwind/react";
 import { useState } from "react";
-import { OpenDirectoryDialog, OpenFileDialog } from "@wailsjs/go/backend/App";
+import { OpenDialogDirApp, OpenDialogFileApp } from "@wailsjs/go/backend/App";
 import useSettings from "@/hooks/useSettings";
 
 const Settings = () => {
@@ -12,8 +12,8 @@ const Settings = () => {
 
   const handlePath = async () => {
     const path = isFileDialog
-      ? await OpenFileDialog()
-      : await OpenDirectoryDialog();
+      ? await OpenDialogFileApp()
+      : await OpenDialogDirApp();
     if (path === "") return;
     await setDefaultSavePath({
       DefaultSavePath: path,

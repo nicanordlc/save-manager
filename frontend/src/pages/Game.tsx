@@ -13,9 +13,9 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import clsx from "clsx";
 import { FaFolderOpen, FaPencil, FaTrash, FaUpload } from "react-icons/fa6";
 import { OpenQuickSaveDir, OpenSaveDir } from "@wailsjs/go/backend/Save";
-import { OpenGameDir } from "@wailsjs/go/backend/Game";
 import { toast } from "react-toastify";
 import { useCallback, useState } from "react";
+import { BrowseGameDir } from "@wailsjs/go/backend/Game";
 import useGame, { type GameSingle } from "@/hooks/useGame";
 import useMenuMiddleItem from "@/hooks/useMenuMiddleItem";
 import LightningSave from "@/components/LightningSave";
@@ -46,7 +46,7 @@ const Game = () => {
   } = useSave({
     GameID: gameID,
   });
-  const { queryGame, updateGame } = useGame<GameSingle>({
+  const { queryGame, updateGame, invalidateGamesQuery } = useGame<GameSingle>({
     queryKey: "game",
     queryArgs: { ID: gameID },
   });
@@ -79,7 +79,7 @@ const Game = () => {
   const handleOpenSaveDirectory = (saveID: string) =>
     OpenSaveDir(saveID, gameID);
 
-  const handleOpenGameDirectory = () => OpenGameDir(gameID);
+  const handleOpenGameDirectory = () => BrowseGameDir(gameID);
 
   const handleQuickSave = useCallback(async () => {
     await addQuickSave({ GameID: gameID });
@@ -163,7 +163,10 @@ const Game = () => {
         </Button>
 
         <Button
-          onClick={() => setDialogOpen(true)}
+          onClick={async () => {
+            await invalidateGamesQuery();
+            setDialogOpen(true);
+          }}
           className="p-3"
           variant="text"
         >
@@ -255,14 +258,19 @@ const Game = () => {
         handler={setDialogOpen}
         title="Edit Game"
         defaultValues={{
-          Name: queryGame.data?.Name,
-          SavePath: queryGame.data?.SavePath,
+          formInputs: {
+            Name: queryGame.data?.Name,
+            SavePath: queryGame.data?.SavePath,
+            SavePathIsFile: queryGame.data?.SavePathIsFile,
+          },
+          gameID,
         }}
         submit={async (data) => {
           await updateGame({
             ID: gameID,
             Name: data.Name,
             SavePath: data.SavePath,
+            SavePathIsFile: data.SavePathIsFile,
           });
           setDialogOpen(false);
         }}

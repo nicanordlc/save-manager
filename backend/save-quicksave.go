@@ -57,7 +57,7 @@ func (s *Save) OpenQuickSaveDir(gameID uuid.UUID) error {
 	if err != nil {
 		return err
 	}
-	if err = utils.OpenPath(s.ctx, quickSaveDir); err != nil {
+	if err = utils.BrowsePath(s.ctx, quickSaveDir); err != nil {
 		return err
 	}
 	return nil

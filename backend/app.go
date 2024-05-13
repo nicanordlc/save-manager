@@ -4,6 +4,7 @@ import (
 	"context"
 	"runtime"
 
+	"github.com/cabaalexander/save-manager/backend/utils"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -27,34 +28,12 @@ func (a *App) ToggleFullScreen() {
 	}
 }
 
-func (a *App) OpenDirectoryDialog() string {
-	path, err := rt.OpenDirectoryDialog(a.ctx, a.getDefaultFileOrDirPath())
-	if err != nil {
-		return ""
-	}
-	return path
+func (a *App) OpenDialogDirApp() (string, error) {
+	return utils.OpenDialogDir(a.ctx, a.Settings.DefaultSavePath, false)
 }
 
-func (a *App) OpenFileDialog() string {
-	path, err := rt.OpenFileDialog(a.ctx, a.getDefaultFileOrDirPath())
-	if err != nil {
-		return ""
-	}
-	return path
-}
-
-func (a *App) getDefaultFileOrDirPath() rt.OpenDialogOptions {
-	defaultPath := a.Settings.DefaultSavePath
-	if a.Settings.JsonSettings.DefaultSavePathIsFile {
-		return rt.OpenDialogOptions{
-			DefaultFilename: defaultPath,
-			Title:           "Select File",
-		}
-	}
-	return rt.OpenDialogOptions{
-		DefaultDirectory: defaultPath,
-		Title:            "Select Directory",
-	}
+func (a *App) OpenDialogFileApp() (string, error) {
+	return utils.OpenDialogFile(a.ctx, a.Settings.DefaultSavePath, true)
 }
 
 func (a *App) GetOS() string {

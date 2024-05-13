@@ -9,7 +9,6 @@ import {
   Input,
   Typography,
 } from "@material-tailwind/react";
-import { OpenDirectoryDialog, OpenFileDialog } from "@wailsjs/go/backend/App";
 import clsx from "clsx";
 import {
   type Dispatch,
@@ -21,12 +20,22 @@ import {
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { FaDirections } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
+import { OpenDialogDirApp, OpenDialogFileApp } from "@wailsjs/go/backend/App";
+import {
+  OpenDialogDirGame,
+  OpenDialogFileGame,
+} from "@wailsjs/go/backend/Game";
 import { type GameSingle } from "@/hooks/useGame";
 import useSettings from "@/hooks/useSettings";
 
 const TRANSITION_TIMEOUT = 300;
 
-type FormInputs = Pick<GameSingle, "Name" | "SavePath">;
+type FormInputs = Pick<GameSingle, "Name" | "SavePath" | "SavePathIsFile">;
+
+type DialogGameFormDefaultValues = {
+  formInputs: Partial<FormInputs>;
+  gameID: string;
+};
 
 type DialogGameFormProps = {
   open: boolean;
@@ -34,15 +43,11 @@ type DialogGameFormProps = {
   title: string;
   bodyTitle?: string;
   required?: Partial<Record<keyof FormInputs, boolean>>;
-  defaultValues?: Partial<Record<keyof FormInputs, string>>;
+  defaultValues?: Partial<DialogGameFormDefaultValues>;
   submit: (data: FormInputs) => unknown;
 };
 
 const DialogGameForm: FC<DialogGameFormProps> = (props) => {
-  const { querySettings } = useSettings();
-  const [isFileDialog, setIsFileDialog] = useState<boolean>(
-    querySettings.data?.DefaultSavePathIsFile ?? false,
-  );
   const {
     register,
     handleSubmit,
@@ -53,17 +58,40 @@ const DialogGameForm: FC<DialogGameFormProps> = (props) => {
     formState: { errors: formErrors },
   } = useForm<FormInputs>();
   const { defaultValues } = props;
+  const { querySettings } = useSettings();
+
+  const defaultIsFile =
+    defaultValues?.formInputs?.SavePathIsFile ??
+    querySettings.data?.DefaultSavePathIsFile ??
+    false;
+
+  const [isFileDialog, setIsFileDialog] = useState<boolean>(defaultIsFile);
 
   const onSubmit: SubmitHandler<FormInputs> = (data) => props.submit(data);
 
   const handlePath = async () => {
-    const path = isFileDialog
-      ? await OpenFileDialog()
-      : await OpenDirectoryDialog();
+    let path = "";
+
+    if (defaultValues?.formInputs?.SavePath === "") {
+      path = isFileDialog
+        ? await OpenDialogFileApp()
+        : await OpenDialogDirApp();
+    } else {
+      path = isFileDialog
+        ? await OpenDialogFileGame(defaultValues?.gameID)
+        : await OpenDialogDirGame(defaultValues?.gameID);
+    }
+
     if (path === "") return;
+
     setValue("SavePath", path);
     clearErrors("SavePath");
     setFocus("Name");
+  };
+
+  const handleIsFile = () => {
+    setIsFileDialog(!isFileDialog);
+    setValue("SavePathIsFile", !isFileDialog);
   };
 
   useEffect(() => {
@@ -75,12 +103,16 @@ const DialogGameForm: FC<DialogGameFormProps> = (props) => {
   });
 
   useEffect(() => {
-    if (defaultValues) {
-      Object.entries(defaultValues).forEach(([key, value]) => {
+    if (defaultValues?.formInputs) {
+      Object.entries(defaultValues.formInputs).forEach(([key, value]) => {
         setValue(key as keyof FormInputs, value);
       });
     }
   }, [defaultValues, setValue]);
+
+  useEffect(() => {
+    setIsFileDialog(defaultIsFile);
+  }, [defaultIsFile]);
 
   const toggleDialog = () => {
     props.handler(!props.open);
@@ -151,10 +183,14 @@ const DialogGameForm: FC<DialogGameFormProps> = (props) => {
 
               <Checkbox
                 checked={isFileDialog}
-                onChange={() => {
-                  setIsFileDialog(!isFileDialog);
-                }}
+                onChange={handleIsFile}
                 label="File"
+              />
+              <input
+                className="hidden"
+                {...register("SavePathIsFile", {
+                  required: props.required?.SavePathIsFile,
+                })}
               />
             </div>
           </div>
@@ -166,7 +202,8 @@ const DialogGameForm: FC<DialogGameFormProps> = (props) => {
           </Button>
 
           <Button type="submit" variant="gradient" color="gray">
-            Create Game
+            {defaultValues?.formInputs?.SavePath === "" ? "CREATE" : "SAVE"}
+            <span> GAME</span>
           </Button>
         </DialogFooter>
       </form>
@@ -177,7 +214,13 @@ const DialogGameForm: FC<DialogGameFormProps> = (props) => {
 DialogGameForm.defaultProps = {
   bodyTitle: "",
   required: { Name: false, SavePath: false },
-  defaultValues: { Name: "", SavePath: "" },
+  defaultValues: {
+    formInputs: {
+      Name: "",
+      SavePath: "",
+    },
+    gameID: "",
+  },
 };
 
 export default DialogGameForm;

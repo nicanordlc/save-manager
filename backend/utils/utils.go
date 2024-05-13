@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"os"
 	"path"
+	"path/filepath"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -158,7 +159,14 @@ type StartAble interface {
 	Startup(ctx context.Context)
 }
 
-func OpenPath(ctx context.Context, path string) error {
+func BrowsePath(ctx context.Context, path string) error {
+	pathIsFile, err := isPathFile(path)
+	if err != nil {
+		return err
+	}
+	if pathIsFile {
+		path = filepath.Dir(path)
+	}
 	rt.BrowserOpenURL(ctx, path)
 	return nil
 }
@@ -169,4 +177,55 @@ func StartApps(l []StartAble) func(ctx context.Context) {
 			app.Startup(ctx)
 		}
 	}
+}
+
+func OpenDialogFile(ctx context.Context, path string, isFile bool) (string, error) {
+	path, err := rt.OpenFileDialog(ctx, getFileOrDirOptions(path, isFile))
+	if err != nil {
+		return "", err
+	}
+	return path, nil
+}
+
+func OpenDialogDir(ctx context.Context, path string, isFile bool) (string, error) {
+	pathIsFile, err := isPathFile(path)
+	if err != nil {
+		return "", err
+	}
+	// if path is a file get parent dir (so this opens a directory efectively)
+	if pathIsFile {
+		path = filepath.Dir(path)
+	}
+	path, err = rt.OpenDirectoryDialog(
+		ctx,
+		getFileOrDirOptions(path, isFile),
+	)
+	if err != nil {
+		return "", err
+	}
+	return path, nil
+}
+
+func getFileOrDirOptions(path string, isFile bool) rt.OpenDialogOptions {
+	if isFile {
+		return rt.OpenDialogOptions{
+			DefaultFilename: path,
+			Title:           "Select File",
+		}
+	}
+	return rt.OpenDialogOptions{
+		DefaultDirectory: path,
+		Title:            "Select Directory",
+	}
+}
+
+func isPathFile(path string) (bool, error) {
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		return false, err
+	}
+	if fileInfo.IsDir() {
+		return false, nil
+	}
+	return true, nil
 }
