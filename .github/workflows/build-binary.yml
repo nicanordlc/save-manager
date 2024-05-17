@@ -20,3 +20,4 @@ jobs:
         with:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
+          node-version: 18.x
