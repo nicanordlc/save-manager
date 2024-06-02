@@ -7,7 +7,12 @@ with a couple of clicks or key strokes.
     <img alt="logo" src="build/appicon.png" width="250" />
 </p>
 
-## Usage preview
+## Download
+
+Go to the download page
+👉 [HERE](https://github.com/cabaalexander/save-manager/releases) 👈.
+
+## Usage and preview
 
 Here's what the app can do:
 
@@ -29,7 +34,8 @@ you'd see each of them right here.
 
 ### Add game
 
-Here you name your game and select the path of the save for that game. It can be a file or a directory.
+Here you name your game and select the path of the save for that game.
+It can be a file or a directory.
 
 ![add game](/imgs/add-game.png)
 
