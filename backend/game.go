@@ -2,6 +2,7 @@ package backend
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -50,7 +51,7 @@ func (g *Game) AddGame(name, savePath string, isFile bool) uuid.UUID {
 	return id
 }
 
-func (g *Game) RemoveGame(id uuid.UUID) {
+func (g *Game) RemoveGame(id uuid.UUID) error {
 	newList := []GameSingle{}
 	for _, game := range g.JsonGame.Data {
 		if game.ID == id {
@@ -58,10 +59,15 @@ func (g *Game) RemoveGame(id uuid.UUID) {
 		}
 		newList = append(newList, game)
 	}
+	if len(newList) == len(g.JsonGame.Data) {
+		errorMsg := fmt.Sprintf("no element deleted: %v", id)
+		return errors.New(errorMsg)
+	}
 	g.JsonGame.Data = newList
 	g.updateJson()
 	g.removeGameDir(id)
 	g.logf("Deleted: %v", id)
+	return nil
 }
 
 func (g *Game) ReadGames() (*JsonGame, error) {

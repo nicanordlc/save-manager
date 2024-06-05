@@ -66,6 +66,14 @@ func (s *Save) LoadSave(saveID, gameID uuid.UUID) error {
 	return nil
 }
 
+func (s *Save) OverwriteSave(saveID, gameID uuid.UUID) error {
+	err := s.copyGameContent(gameID, saveID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *Save) ReadSaves() (*JsonSave, error) {
 	saveJson, err := utils.ReadConfigFrom[JsonSave](s.filename)
 	return saveJson, err
@@ -132,9 +140,6 @@ func (s *Save) copyGameContent(gameID, saveID uuid.UUID) error {
 func (s *Save) copySaveContent(saveID, gameID uuid.UUID) error {
 	savePath, gamePath, err := s.getSaveAndGameContentPath(saveID, gameID)
 	if err != nil {
-		return err
-	}
-	if err = os.RemoveAll(gamePath); err != nil {
 		return err
 	}
 	if err = utils.CopyDir(savePath, gamePath); err != nil {

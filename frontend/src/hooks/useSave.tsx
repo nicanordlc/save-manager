@@ -6,6 +6,7 @@ import {
   GetSaves,
   LoadQuickSave,
   LoadSave,
+  OverwriteSave,
   RemoveQuickSave,
   RemoveSave,
 } from "@wailsjs/go/backend/Save";
@@ -70,6 +71,11 @@ const useSave = (props?: Pick<SaveSingle, "GameID">) => {
     mutationFn: (s: Pick<SaveSingle, "GameID">) => LoadQuickSave(s.GameID),
   });
 
+  const { mutateAsync: overwriteSave } = useMutation({
+    mutationFn: (s: Pick<SaveSingle, "ID" | "GameID">) =>
+      OverwriteSave(s.ID, s.GameID),
+  });
+
   return {
     querySaves,
     queryQuickSave,
@@ -79,6 +85,7 @@ const useSave = (props?: Pick<SaveSingle, "GameID">) => {
     removeQuickSave,
     loadSave,
     loadQuickSave,
+    overwriteSave,
   };
 };
 
