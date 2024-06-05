@@ -4,14 +4,13 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Chip,
   Input,
   Typography,
 } from "@material-tailwind/react";
 import { useParams } from "react-router-dom";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import clsx from "clsx";
-import { FaFolderOpen, FaPencil, FaTrash, FaUpload } from "react-icons/fa6";
+import { FaFolderOpen, FaPencil } from "react-icons/fa6";
 import { OpenQuickSaveDir, OpenSaveDir } from "@wailsjs/go/backend/Save";
 import { toast } from "react-toastify";
 import { useCallback, useState } from "react";
@@ -22,6 +21,9 @@ import LightningSave from "@/components/LightningSave";
 import useSave from "@/hooks/useSave";
 import useEvents from "@/hooks/useEvents";
 import DialogGameForm from "@/components/DialogGameForm";
+import Save from "@/components/Save";
+import WithTooltip from "@/components/WithTooltip";
+import QuickSaveChip from "@/components/QuickSaveChip";
 
 type GameQueryParams = {
   id: string;
@@ -43,6 +45,7 @@ const Game = () => {
     removeQuickSave,
     loadSave,
     loadQuickSave,
+    overwriteSave,
   } = useSave({
     GameID: gameID,
   });
@@ -73,6 +76,11 @@ const Game = () => {
     toast.info("Loaded");
   };
 
+  const handleOverwrite = async (saveID: string) => {
+    await overwriteSave({ ID: saveID, GameID: gameID });
+    toast.info("Saved");
+  };
+
   const handleDelete = (saveID: string) =>
     removeSave({ ID: saveID, GameID: gameID });
 
@@ -93,55 +101,8 @@ const Game = () => {
 
   const handleOpenQuickSaveDirectory = () => OpenQuickSaveDir(gameID);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const intlDate = new Intl.DateTimeFormat("en-US").format(date);
-    return intlDate;
-  };
-
   useEvents({ type: "quickSave", cb: handleQuickSave });
   useEvents({ type: "quickLoad", cb: handleQuickLoad });
-
-  const chipValue = (
-    <div className="flex items-center gap-2">
-      <span>Quick Save</span>
-
-      <Button
-        onClick={() => handleOpenQuickSaveDirectory()}
-        className="p-0.5"
-        variant="text"
-      >
-        <FaFolderOpen size={12} />
-      </Button>
-    </div>
-  );
-
-  const getQuickSaveChip = () => (
-    <div className="flex gap-4">
-      <Chip
-        className={clsx({
-          "[&_button]:pointer-events-none [&_button]:opacity-50":
-            !quickSaveEnabled,
-        })}
-        variant="ghost"
-        color={quickSaveEnabled ? "green" : "red"}
-        size="sm"
-        value={chipValue}
-        onClose={() => removeQuickSave({ GameID: gameID })}
-        icon={
-          <span
-            className={clsx(
-              "mx-auto mt-1 block h-2 w-2 rounded-full content-['']",
-              {
-                "bg-red-900": !quickSaveEnabled,
-                "bg-green-900": quickSaveEnabled,
-              },
-            )}
-          />
-        }
-      />
-    </div>
-  );
 
   useMenuMiddleItem(
     <LightningSave onSave={handleQuickSave} onLoad={handleQuickLoad} />,
@@ -154,24 +115,28 @@ const Game = () => {
       </Typography>
 
       <div className="mb-2 rounded-full border-4">
-        <Button
-          onClick={() => handleOpenGameDirectory()}
-          className="rounded-bl-[20px] rounded-tl-[20px] p-3"
-          variant="text"
-        >
-          <FaFolderOpen size={15} />
-        </Button>
+        <WithTooltip content="Open" placement="top">
+          <Button
+            onClick={() => handleOpenGameDirectory()}
+            className="rounded-bl-[20px] rounded-tl-[20px] p-3"
+            variant="text"
+          >
+            <FaFolderOpen size={15} />
+          </Button>
+        </WithTooltip>
 
-        <Button
-          onClick={async () => {
-            await invalidateGamesQuery();
-            setDialogOpen(true);
-          }}
-          className="p-3"
-          variant="text"
-        >
-          <FaPencil size={15} />
-        </Button>
+        <WithTooltip content="Edit" placement="top">
+          <Button
+            onClick={async () => {
+              await invalidateGamesQuery();
+              setDialogOpen(true);
+            }}
+            className="p-3"
+            variant="text"
+          >
+            <FaPencil size={15} />
+          </Button>
+        </WithTooltip>
       </div>
 
       <Card className="w-full grow border-4 shadow-none">
@@ -184,7 +149,11 @@ const Game = () => {
           <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex justify-between">
               <Typography color="gray">Manage your saves 👾</Typography>
-              {getQuickSaveChip()}
+              <QuickSaveChip
+                enabled={quickSaveEnabled ?? false}
+                onClose={() => removeQuickSave({ GameID: gameID })}
+                onOpen={() => handleOpenQuickSaveDirectory()}
+              />
             </div>
 
             <Input
@@ -214,45 +183,19 @@ const Game = () => {
             <div />
           ) : (
             querySaves.data?.map((save) => (
-              <div
-                className="grid grid-cols-12 items-center justify-between break-all even:bg-blue-gray-50/50"
-                key={save.Name}
-              >
-                <div className="col-span-7 flex items-center gap-2">
-                  <Button
-                    onClick={() => handleLoad(save.ID)}
-                    className="p-3"
-                    variant="text"
-                  >
-                    <FaUpload size={15} />
-                  </Button>
-                  <Typography>{save.Name}</Typography>
-                </div>
-
-                <Typography className="col-span-3 px-2">
-                  {formatDate(save.CreatedAt)}
-                </Typography>
-
-                <Button
-                  onClick={() => handleOpenSaveDirectory(save.ID)}
-                  className="p-3"
-                  variant="text"
-                >
-                  <FaFolderOpen size={15} />
-                </Button>
-
-                <Button
-                  onClick={() => handleDelete(save.ID)}
-                  className="p-3"
-                  variant="text"
-                >
-                  <FaTrash size={15} />
-                </Button>
-              </div>
+              <Save
+                key={save.ID}
+                data={save}
+                onLoad={() => handleLoad(save.ID)}
+                onSave={() => handleOverwrite(save.ID)}
+                onDelete={() => handleDelete(save.ID)}
+                onOpenDirectory={() => handleOpenSaveDirectory(save.ID)}
+              />
             ))
           )}
         </CardBody>
       </Card>
+
       <DialogGameForm
         open={dialogOpen}
         handler={setDialogOpen}
