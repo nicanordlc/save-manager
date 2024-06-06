@@ -22,51 +22,35 @@ const Save = (props: SaveProps) => {
 
   return (
     <div
-      className="grid grid-cols-12 items-center justify-between break-all even:bg-blue-gray-50/50"
+      className="flex items-center justify-between break-all even:bg-blue-gray-50/50 [&>button]:flex [&>button]:justify-center [&>button]:p-3"
       key={props.data.Name}
     >
-      <div className="col-span-7 flex items-center gap-2">
-        <div>
-          <WithTooltip content="Load" placement="top">
-            <Button
-              onClick={() => props.onLoad()}
-              className="p-3"
-              variant="text"
-            >
-              <FaUpload size={15} />
-            </Button>
-          </WithTooltip>
+      <WithTooltip content="Load" placement="top">
+        <Button onClick={() => props.onLoad()} variant="text">
+          <FaUpload size={15} />
+        </Button>
+      </WithTooltip>
 
-          <WithTooltip content="Save" placement="top">
-            <Button
-              onClick={() => props.onSave()}
-              className="p-3"
-              variant="text"
-            >
-              <FaDownload size={15} />
-            </Button>
-          </WithTooltip>
-        </div>
+      <WithTooltip content="Save" placement="top">
+        <Button onClick={() => props.onSave()} variant="text">
+          <FaDownload size={15} />
+        </Button>
+      </WithTooltip>
 
-        <Typography>{props.data.Name}</Typography>
-      </div>
+      <Typography className="col-span-5 w-0 grow">{props.data.Name}</Typography>
 
-      <Typography className="col-span-3 px-2">
+      <Typography className="col-span-3 px-2 text-center">
         {formatDate(props.data.CreatedAt)}
       </Typography>
 
       <WithTooltip content="Open" placement="top">
-        <Button
-          onClick={() => props.onOpenDirectory()}
-          className="p-3"
-          variant="text"
-        >
+        <Button onClick={() => props.onOpenDirectory()} variant="text">
           <FaFolderOpen size={15} />
         </Button>
       </WithTooltip>
 
       <WithTooltip content="Delete" placement="top">
-        <Button onClick={() => props.onDelete()} className="p-3" variant="text">
+        <Button onClick={() => props.onDelete()} variant="text">
           <FaTrash size={15} />
         </Button>
       </WithTooltip>

@@ -37,8 +37,6 @@ func main() {
 		Height:           appSize,
 		MinWidth:         appSize,
 		MinHeight:        appSize,
-		MaxWidth:         appSize,
-		MaxHeight:        appSize,
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		Menu:             appMenu.Menu,
 		Bind:             binds,
