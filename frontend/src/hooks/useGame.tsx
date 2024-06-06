@@ -59,7 +59,7 @@ const useGame = <T,>(props?: Partial<UseGame>) => {
   const { mutateAsync: addGame } = useMutation({
     onSuccess: invalidateGamesQuery,
     mutationFn: (g: Pick<GameSingle, "Name" | "SavePath" | "SavePathIsFile">) =>
-      AddGame(g.Name, g.SavePath, g.SavePathIsFile),
+      AddGame(g.Name, g.SavePath, Boolean(g.SavePathIsFile)),
   });
 
   const { mutateAsync: updateGame } = useMutation({
