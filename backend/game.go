@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/cabaalexander/save-manager/backend/models"
 	"github.com/cabaalexander/save-manager/backend/utils"
 	"github.com/google/uuid"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
@@ -24,28 +25,27 @@ type JsonGame struct {
 }
 
 type Game struct {
-	ctx      context.Context
-	filename string
-	JsonGame
+	ctx context.Context
+	models.Json[JsonGame]
 }
 
 func (g *Game) Startup(ctx context.Context) {
 	g.ctx = ctx
-	g.filename = "game.json"
-	utils.CreateConfigJsonIfNoExists[JsonGame](g.filename)
+	g.Filename = "game.json"
+	g.CreateConfigJsonIfNoExists()
 
-	game, err := g.ReadGames()
+	game, err := g.ReadData()
 	if err != nil {
 		panic(err)
 	}
-	g.JsonGame = *game
+	g.JsonData = *game
 }
 
 func (g *Game) AddGame(name, savePath string, isFile bool) uuid.UUID {
 	id := uuid.New()
 	game := GameSingle{ID: id, Name: name, SavePath: savePath, SavePathIsFile: isFile}
-	g.JsonGame.Data = append(g.JsonGame.Data, game)
-	g.updateJson()
+	g.JsonData.Data = append(g.JsonData.Data, game)
+	g.UpdateJson()
 	CreateGameDir(id)
 	g.logf("Created: %v", id)
 	return id
@@ -53,33 +53,25 @@ func (g *Game) AddGame(name, savePath string, isFile bool) uuid.UUID {
 
 func (g *Game) RemoveGame(id uuid.UUID) error {
 	newList := []GameSingle{}
-	for _, game := range g.JsonGame.Data {
+	for _, game := range g.JsonData.Data {
 		if game.ID == id {
 			continue
 		}
 		newList = append(newList, game)
 	}
-	if len(newList) == len(g.JsonGame.Data) {
+	if len(newList) == len(g.JsonData.Data) {
 		errorMsg := fmt.Sprintf("no element deleted: %v", id)
 		return errors.New(errorMsg)
 	}
-	g.JsonGame.Data = newList
-	g.updateJson()
+	g.JsonData.Data = newList
+	g.UpdateJson()
 	g.removeGameDir(id)
 	g.logf("Deleted: %v", id)
 	return nil
 }
 
-func (g *Game) ReadGames() (*JsonGame, error) {
-	gameJson, err := utils.ReadConfigFrom[JsonGame](g.filename)
-	if err != nil {
-		return gameJson, err
-	}
-	return gameJson, nil
-}
-
 func (g *Game) FindGame(id uuid.UUID) GameSingle {
-	for _, game := range g.JsonGame.Data {
+	for _, game := range g.JsonData.Data {
 		if game.ID != id {
 			continue
 		}
@@ -89,7 +81,7 @@ func (g *Game) FindGame(id uuid.UUID) GameSingle {
 }
 
 func (g *Game) BrowseGameDir(gameID uuid.UUID) {
-	for _, game := range g.JsonGame.Data {
+	for _, game := range g.JsonData.Data {
 		if game.ID == gameID {
 			utils.BrowsePath(g.ctx, game.SavePath)
 		}
@@ -98,7 +90,7 @@ func (g *Game) BrowseGameDir(gameID uuid.UUID) {
 
 func (g *Game) UpdateGame(props GameSingle) {
 	var gameList []GameSingle
-	for _, gm := range g.JsonGame.Data {
+	for _, gm := range g.JsonData.Data {
 		if gm.ID == props.ID {
 			if props.Name != "" {
 				gm.Name = props.Name
@@ -110,8 +102,8 @@ func (g *Game) UpdateGame(props GameSingle) {
 		}
 		gameList = append(gameList, gm)
 	}
-	g.JsonGame.Data = gameList
-	g.updateJson()
+	g.JsonData.Data = gameList
+	g.UpdateJson()
 }
 
 func (g *Game) OpenDialogDirGame(gameID uuid.UUID) (string, error) {
@@ -136,10 +128,6 @@ func (g *Game) removeGameDir(gameID uuid.UUID) error {
 func (g *Game) logf(format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
 	rt.LogDebugf(g.ctx, "[Game] %v", msg)
-}
-
-func (g *Game) updateJson() error {
-	return utils.WriteStructTo(g.filename, g.JsonGame)
 }
 
 func CreateGameDir(gameID uuid.UUID) error {

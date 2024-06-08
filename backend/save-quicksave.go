@@ -30,7 +30,7 @@ func (s *Save) GetQuickSave(gameID uuid.UUID) (bool, error) {
 }
 
 func (s *Save) AddQuicksave(gameID uuid.UUID) error {
-	s.updateJson()
+	s.UpdateJson()
 	s.createQuickSaveDir(gameID)
 	s.copyGameContentQuickSave(gameID)
 	s.logf("Created quicksave for: %v", gameID)
@@ -46,7 +46,7 @@ func (s *Save) LoadQuickSave(gameID uuid.UUID) error {
 }
 
 func (s *Save) RemoveQuickSave(gameID uuid.UUID) error {
-	s.updateJson()
+	s.UpdateJson()
 	s.logf("Deleted quicksave for: %v", gameID)
 	s.removeQuickSaveDir(gameID)
 	return nil

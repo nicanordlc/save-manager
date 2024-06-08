@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 
+	"github.com/cabaalexander/save-manager/backend/models"
 	"github.com/cabaalexander/save-manager/backend/utils"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -15,22 +16,21 @@ type JsonSettings struct {
 }
 
 type Settings struct {
-	ctx      context.Context
-	filename string
-	JsonSettings
+	ctx context.Context
+	models.Json[JsonSettings]
 }
 
 func (s *Settings) Startup(ctx context.Context) {
 	s.ctx = ctx
-	s.filename = "settings.json"
-	utils.CreateConfigJsonIfNoExists[JsonSettings](s.filename)
+	s.Filename = "settings.json"
+	s.CreateConfigJsonIfNoExists()
 	utils.CreateSavesDirIfNoExists()
 
-	settings, errSettings := s.ReadSettings()
+	settings, errSettings := s.ReadData()
 	if errSettings != nil {
 		panic(errSettings)
 	}
-	s.JsonSettings = *settings
+	s.JsonData = *settings
 
 	// initialize settings
 	if settings.AlwaysOnTop {
@@ -39,41 +39,29 @@ func (s *Settings) Startup(ctx context.Context) {
 	if settings.DefaultSavePath == "" {
 		path, _ := os.UserConfigDir()
 		if path != "" {
-			s.JsonSettings.DefaultSavePath = path
-			s.JsonSettings.DefaultSavePathIsFile = false
-			s.updateJson()
+			s.JsonData.DefaultSavePath = path
+			s.JsonData.DefaultSavePathIsFile = false
+			s.UpdateJson()
 		}
 	}
 }
 
 func (s *Settings) ToggleAlwaysOnTop() bool {
-	isAlwaysOnTop := !s.AlwaysOnTop
-	s.AlwaysOnTop = isAlwaysOnTop
+	isAlwaysOnTop := !s.JsonData.AlwaysOnTop
+	s.JsonData.AlwaysOnTop = isAlwaysOnTop
 
 	rt.WindowSetAlwaysOnTop(s.ctx, isAlwaysOnTop)
-	s.updateJson()
+	s.UpdateJson()
 
 	return isAlwaysOnTop
 }
 
-func (s *Settings) ReadSettings() (*JsonSettings, error) {
-	settingsJson, err := utils.ReadConfigFrom[JsonSettings](s.filename)
-	if err != nil {
-		return settingsJson, err
-	}
-	return settingsJson, nil
-}
-
 func (s *Settings) SetDefaultSavePath(path string, isFile bool) {
-	s.JsonSettings.DefaultSavePath = path
-	s.JsonSettings.DefaultSavePathIsFile = isFile
-	s.updateJson()
+	s.JsonData.DefaultSavePath = path
+	s.JsonData.DefaultSavePathIsFile = isFile
+	s.UpdateJson()
 }
 
 func NewSettings() *Settings {
 	return &Settings{}
-}
-
-func (s *Settings) updateJson() error {
-	return utils.WriteStructTo(s.filename, s.JsonSettings)
 }

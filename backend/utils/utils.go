@@ -2,7 +2,6 @@ package utils
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"io/fs"
 	"os"
@@ -12,38 +11,16 @@ import (
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func ReadConfigFrom[T any](filename string) (*T, error) {
-	var defalutData T
-	path, err := getConfigJson(filename)
-	if err != nil {
-		return &defalutData, err
-	}
-	jsonByte, errJsonByte := os.ReadFile(path)
-	if errJsonByte != nil {
-		return &defalutData, errJsonByte
-	}
-	var data T
-	errData := json.Unmarshal(jsonByte, &data)
-	if errData != nil {
-		return &defalutData, errData
-	}
-	return &data, nil
+type StartAble interface {
+	Startup(ctx context.Context)
 }
 
-func CreateConfigJsonIfNoExists[T any](filename string) (string, error) {
-	settingsJson, errSettingsJson := getConfigJson(filename)
-	if errSettingsJson != nil {
-		return "", errSettingsJson
+func StartApps(l []StartAble) func(ctx context.Context) {
+	return func(ctx context.Context) {
+		for _, app := range l {
+			app.Startup(ctx)
+		}
 	}
-	jsonExists, errJsonExists := exists(settingsJson)
-	if errJsonExists != nil {
-		return "", errJsonExists
-	}
-	if !jsonExists {
-		var data T
-		WriteStructTo(filename, &data)
-	}
-	return settingsJson, nil
 }
 
 func CreateSavesDirIfNoExists() (string, error) {
@@ -55,7 +32,7 @@ func CreateSavesDirIfNoExists() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	dirExists, errDirExists := exists(savesDir)
+	dirExists, errDirExists := Exists(savesDir)
 	if errDirExists != nil {
 		return "", errDirExists
 	}
@@ -92,19 +69,7 @@ func GetSaveDir(saveDir string) (string, error) {
 	return newSaveDir, nil
 }
 
-func WriteStructTo[T any](filename string, jsonStruct T) error {
-	path, err := getConfigJson(filename)
-	if err != nil {
-		return err
-	}
-	jsonByte, errJsonByte := json.Marshal(jsonStruct)
-	if errJsonByte != nil {
-		return errJsonByte
-	}
-	return os.WriteFile(path, jsonByte, 0644)
-}
-
-func exists(path string) (bool, error) {
+func Exists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
 		return true, nil
@@ -115,37 +80,6 @@ func exists(path string) (bool, error) {
 	return false, err
 }
 
-func getConfigJson(filename string) (string, error) {
-	err := createConfigDirIfNoExist()
-	if err != nil {
-		return "", err
-	}
-	if filename == "" {
-		return "", errors.New("filename cannot be empty")
-	}
-	configDir, err := GetAppConfigDir()
-	if err != nil {
-		return "", err
-	}
-	settingsJson := path.Join(configDir, filename)
-	return settingsJson, nil
-}
-
-func createConfigDirIfNoExist() error {
-	appConfigPath, err := GetAppConfigDir()
-	if err != nil {
-		return err
-	}
-	dirExists, errDirExists := exists(appConfigPath)
-	if errDirExists != nil {
-		return errDirExists
-	}
-	if !dirExists {
-		os.Mkdir(appConfigPath, os.ModePerm)
-	}
-	return nil
-}
-
 func GetAppConfigDir() (string, error) {
 	userConfig, err := os.UserConfigDir()
 	if err != nil {
@@ -153,10 +87,6 @@ func GetAppConfigDir() (string, error) {
 	}
 	appConfigPath := path.Join(userConfig, "Save Manager")
 	return appConfigPath, nil
-}
-
-type StartAble interface {
-	Startup(ctx context.Context)
 }
 
 func BrowsePath(ctx context.Context, path string) error {
@@ -169,14 +99,6 @@ func BrowsePath(ctx context.Context, path string) error {
 	}
 	rt.BrowserOpenURL(ctx, path)
 	return nil
-}
-
-func StartApps(l []StartAble) func(ctx context.Context) {
-	return func(ctx context.Context) {
-		for _, app := range l {
-			app.Startup(ctx)
-		}
-	}
 }
 
 func OpenDialogFile(ctx context.Context, path string, isFile bool) (string, error) {
@@ -204,6 +126,21 @@ func OpenDialogDir(ctx context.Context, path string, isFile bool) (string, error
 		return "", err
 	}
 	return path, nil
+}
+
+func createConfigDirIfNoExist() error {
+	appConfigPath, err := GetAppConfigDir()
+	if err != nil {
+		return err
+	}
+	dirExists, errDirExists := Exists(appConfigPath)
+	if errDirExists != nil {
+		return errDirExists
+	}
+	if !dirExists {
+		os.Mkdir(appConfigPath, os.ModePerm)
+	}
+	return nil
 }
 
 func getFileOrDirOptions(path string, isFile bool) rt.OpenDialogOptions {

@@ -8,6 +8,7 @@ import (
 	"path"
 	"time"
 
+	"github.com/cabaalexander/save-manager/backend/models"
 	"github.com/cabaalexander/save-manager/backend/utils"
 	"github.com/google/uuid"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
@@ -25,33 +26,32 @@ type JsonSave struct {
 }
 
 type Save struct {
-	ctx      context.Context
-	filename string
-	Game     *Game
-	JsonSave
+	ctx  context.Context
+	Game *Game
+	models.Json[JsonSave]
 }
 
 func (s *Save) Startup(ctx context.Context) {
 	s.ctx = ctx
-	s.filename = "save.json"
-	utils.CreateConfigJsonIfNoExists[JsonSave](s.filename)
+	s.Filename = "save.json"
+	s.CreateConfigJsonIfNoExists()
 
-	save, err := s.ReadSaves()
+	save, err := s.ReadData()
 	if err != nil {
 		panic(err)
 	}
-	s.JsonSave = *save
+	s.JsonData = *save
 }
 
 func (s *Save) AddSave(name string, gameID uuid.UUID) uuid.UUID {
 	id := uuid.New()
 	now := time.Now()
 	save := SaveSingle{Name: name, ID: id, GameID: gameID, CreatedAt: now}
-	if len(s.JsonSave.Data) < 1 {
-		s.JsonSave.Data = make(map[uuid.UUID][]SaveSingle)
+	if len(s.JsonData.Data) < 1 {
+		s.JsonData.Data = make(map[uuid.UUID][]SaveSingle)
 	}
-	s.JsonSave.Data[gameID] = append(s.JsonSave.Data[gameID], save)
-	s.updateJson()
+	s.JsonData.Data[gameID] = append(s.JsonData.Data[gameID], save)
+	s.UpdateJson()
 	CreateSaveDir(id, gameID)
 	s.copyGameContent(gameID, id)
 	s.logf("Created: %v", id)
@@ -74,14 +74,9 @@ func (s *Save) OverwriteSave(saveID, gameID uuid.UUID) error {
 	return nil
 }
 
-func (s *Save) ReadSaves() (*JsonSave, error) {
-	saveJson, err := utils.ReadConfigFrom[JsonSave](s.filename)
-	return saveJson, err
-}
-
 func (s *Save) GetSaves(gameID uuid.UUID) []SaveSingle {
 	var gameSaves []SaveSingle
-	for _, save := range s.JsonSave.Data[gameID] {
+	for _, save := range s.JsonData.Data[gameID] {
 		if save.GameID == gameID {
 			gameSaves = append(gameSaves, save)
 		}
@@ -91,18 +86,18 @@ func (s *Save) GetSaves(gameID uuid.UUID) []SaveSingle {
 
 func (s *Save) RemoveSave(saveID uuid.UUID, gameID uuid.UUID) error {
 	var newList []SaveSingle
-	for _, save := range s.JsonSave.Data[gameID] {
+	for _, save := range s.JsonData.Data[gameID] {
 		if save.ID == saveID {
 			continue
 		}
 		newList = append(newList, save)
 	}
 	if len(newList) < 1 {
-		s.JsonSave.Data[gameID] = make([]SaveSingle, 0)
+		s.JsonData.Data[gameID] = make([]SaveSingle, 0)
 	} else {
-		s.JsonSave.Data[gameID] = newList
+		s.JsonData.Data[gameID] = newList
 	}
-	s.updateJson()
+	s.UpdateJson()
 	s.logf("Deleted: %v", saveID)
 	err := s.removeSaveDir(saveID, gameID)
 	if err != nil {
@@ -112,8 +107,8 @@ func (s *Save) RemoveSave(saveID uuid.UUID, gameID uuid.UUID) error {
 }
 
 func (s *Save) RemoveSaveForGame(gameID uuid.UUID) {
-	s.JsonSave.Data = make(map[uuid.UUID][]SaveSingle)
-	s.updateJson()
+	s.JsonData.Data = make(map[uuid.UUID][]SaveSingle)
+	s.UpdateJson()
 }
 
 func (s *Save) OpenSaveDir(saveID, gameID uuid.UUID) error {
@@ -149,7 +144,7 @@ func (s *Save) copySaveContent(saveID, gameID uuid.UUID) error {
 }
 
 func (s *Save) getGameContentPath(gameID uuid.UUID) (string, error) {
-	for _, game := range s.Game.Data {
+	for _, game := range s.Game.JsonData.Data {
 		if game.ID == gameID {
 			return game.SavePath, nil
 		}
@@ -181,10 +176,6 @@ func (s *Save) removeSaveDir(saveID uuid.UUID, gameID uuid.UUID) error {
 func (s *Save) logf(format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
 	rt.LogDebugf(s.ctx, "[Save] %v", msg)
-}
-
-func (s *Save) updateJson() error {
-	return utils.WriteStructTo(s.filename, s.JsonSave)
 }
 
 func CreateSaveDir(saveID uuid.UUID, gameID uuid.UUID) error {

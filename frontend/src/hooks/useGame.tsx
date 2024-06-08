@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AddGame,
   FindGame,
-  ReadGames,
+  ReadData,
   RemoveGame,
   UpdateGame,
 } from "@wailsjs/go/backend/Game";
@@ -37,7 +37,7 @@ const useGame = <T,>(props?: Partial<UseGame>) => {
           return FindGame(props.queryArgs?.ID);
         }
         default: {
-          return ReadGames();
+          return ReadData();
         }
       }
     },

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  ReadSettings,
+  ReadData,
   SetDefaultSavePath,
   ToggleAlwaysOnTop,
 } from "@wailsjs/go/backend/Settings";
@@ -18,7 +18,7 @@ const useSettings = () => {
 
   const querySettings = useQuery<Settings>({
     queryKey: [QUERY_KEY],
-    queryFn: ReadSettings,
+    queryFn: ReadData,
   });
 
   const updateSettings = () =>

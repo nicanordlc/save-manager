@@ -4,6 +4,7 @@ import (
 	"context"
 	"runtime"
 
+	"github.com/cabaalexander/save-manager/backend/models"
 	"github.com/cabaalexander/save-manager/backend/utils"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -15,30 +16,23 @@ type JsonApp struct {
 	}
 }
 
-// App struct
 type App struct {
 	ctx      context.Context
-	filename string
 	Settings *Settings
-	JsonApp
+	models.Json[JsonApp]
 }
 
-// startup is called when the app starts. The context is saved
-// so we can call the runtime methods
 func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
-	a.filename = "app.json"
-	utils.CreateConfigJsonIfNoExists[JsonApp](a.filename)
+	a.Filename = "app.json"
+	a.CreateConfigJsonIfNoExists()
 
-	app, err := a.ReadApp()
+	app, err := a.ReadData()
 	if err != nil {
 		panic(err)
 	}
-	if a.Size == struct {
-		Width  int
-		Height int
-	}{} {
-		a.Size = app.Size
+	if app.Size.Width != 0 && app.Size.Height != 0 {
+		a.JsonData.Size = app.Size
 		rt.WindowSetSize(a.ctx, app.Size.Width, app.Size.Height)
 	}
 }
@@ -52,11 +46,11 @@ func (a *App) ToggleFullScreen() {
 }
 
 func (a *App) OpenDialogDirApp() (string, error) {
-	return utils.OpenDialogDir(a.ctx, a.Settings.DefaultSavePath, false)
+	return utils.OpenDialogDir(a.ctx, a.Settings.JsonData.DefaultSavePath, false)
 }
 
 func (a *App) OpenDialogFileApp() (string, error) {
-	return utils.OpenDialogFile(a.ctx, a.Settings.DefaultSavePath, true)
+	return utils.OpenDialogFile(a.ctx, a.Settings.JsonData.DefaultSavePath, true)
 }
 
 func (a *App) GetOS() string {
@@ -65,24 +59,11 @@ func (a *App) GetOS() string {
 }
 
 func (a *App) UpdateAppSize(width, height int) error {
-	a.Size.Width = width
-	a.Size.Height = height
-	return a.updateJson()
+	a.JsonData.Size.Width = width
+	a.JsonData.Size.Height = height
+	return a.UpdateJson()
 }
 
-func (a *App) ReadApp() (*JsonApp, error) {
-	appJson, err := utils.ReadConfigFrom[JsonApp](a.filename)
-	if err != nil {
-		return appJson, err
-	}
-	return appJson, nil
-}
-
-func (a *App) updateJson() error {
-	return utils.WriteStructTo(a.filename, a.JsonApp)
-}
-
-// NewApp creates a new App application struct
 func NewApp() *App {
 	return &App{}
 }
