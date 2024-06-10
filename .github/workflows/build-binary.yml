@@ -15,6 +15,7 @@ jobs:
         build: [
           {name: save-manager, platform: linux/amd64, os: ubuntu-latest},
           {name: save-manager, platform: windows/amd64, os: windows-latest},
+          {name: save-manager, platform: windows/amd64, os: windows-latest, nsis: false},
         ]
     runs-on: ${{ matrix.build.os }}
     steps:
@@ -26,3 +27,4 @@ jobs:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
           node-version: 18.x
+          nsis: ${{ matrix.build.nsis }}
