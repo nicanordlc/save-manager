@@ -92,6 +92,7 @@ func (s *Save) UpdateSave(saveID, gameID uuid.UUID, name string) error {
 	for _, save := range s.JsonData.Data[gameID] {
 		if save.ID == saveID {
 			save.Name = name
+			save.CreatedAt = time.Now()
 		}
 		newList = append(newList, save)
 	}
