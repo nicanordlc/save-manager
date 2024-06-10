@@ -10,7 +10,7 @@ with a couple of clicks or key strokes.
 ## Download
 
 Go to the download page
-👉 [HERE](https://github.com/cabaalexander/save-manager/releases) 👈.
+👉 [HERE](https://github.com/cabaalexander/save-manager/releases) 👈
 
 ## Usage and preview
 
