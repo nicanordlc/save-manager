@@ -9,6 +9,7 @@ import {
   OverwriteSave,
   RemoveQuickSave,
   RemoveSave,
+  UpdateSave,
 } from "@wailsjs/go/backend/Save";
 
 export type SaveSingle = {
@@ -76,6 +77,12 @@ const useSave = (props?: Pick<SaveSingle, "GameID">) => {
       OverwriteSave(s.ID, s.GameID),
   });
 
+  const { mutateAsync: updateSave } = useMutation({
+    mutationFn: (s: Pick<SaveSingle, "ID" | "GameID" | "Name">) =>
+      UpdateSave(s.ID, s.GameID, s.Name),
+    onSuccess: invalidateSavesQuery,
+  });
+
   return {
     querySaves,
     queryQuickSave,
@@ -86,6 +93,7 @@ const useSave = (props?: Pick<SaveSingle, "GameID">) => {
     loadSave,
     loadQuickSave,
     overwriteSave,
+    updateSave,
   };
 };
 

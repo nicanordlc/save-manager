@@ -1,7 +1,8 @@
 import { Button, Typography } from "@material-tailwind/react";
 import { FaDownload, FaFolderOpen, FaTrash, FaUpload } from "react-icons/fa6";
-import { type SaveSingle } from "@/hooks/useSave";
+import useSave, { type SaveSingle } from "@/hooks/useSave";
 import WithTooltip from "@/components/WithTooltip";
+import NameInput from "@/components/Save/NameInput";
 
 type SavePropsCallback = () => Promise<void> | void;
 
@@ -14,6 +15,8 @@ type SaveProps = {
 };
 
 const Save = (props: SaveProps) => {
+  const { updateSave } = useSave({ GameID: props.data.GameID });
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const intlDate = new Intl.DateTimeFormat("en-US").format(date);
@@ -37,7 +40,16 @@ const Save = (props: SaveProps) => {
         </Button>
       </WithTooltip>
 
-      <Typography className="col-span-5 w-0 grow">{props.data.Name}</Typography>
+      <NameInput
+        onSubmit={(data) => {
+          updateSave({
+            ID: props.data.ID,
+            GameID: props.data.GameID,
+            Name: data.Name,
+          });
+        }}
+        name={props.data.Name}
+      />
 
       <Typography className="col-span-3 px-2 text-center">
         {formatDate(props.data.CreatedAt)}

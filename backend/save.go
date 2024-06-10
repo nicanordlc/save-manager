@@ -84,6 +84,22 @@ func (s *Save) GetSaves(gameID uuid.UUID) []SaveSingle {
 	return gameSaves
 }
 
+func (s *Save) UpdateSave(saveID, gameID uuid.UUID, name string) error {
+	if name == "" {
+		return errors.New("name is empty")
+	}
+	var newList []SaveSingle
+	for _, save := range s.JsonData.Data[gameID] {
+		if save.ID == saveID {
+			save.Name = name
+		}
+		newList = append(newList, save)
+	}
+	s.JsonData.Data[gameID] = newList
+	s.UpdateJson()
+	return nil
+}
+
 func (s *Save) RemoveSave(saveID uuid.UUID, gameID uuid.UUID) error {
 	var newList []SaveSingle
 	for _, save := range s.JsonData.Data[gameID] {
