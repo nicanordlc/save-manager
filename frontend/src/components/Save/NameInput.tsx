@@ -50,7 +50,7 @@ const NameInput = (props: NameInputProps) => {
     <div className="col-span-5 flex min-h-[40px] w-0 grow items-center ">
       <Typography
         onClick={() => handleEdit()}
-        className="w-full rounded-md pl-2 hover:outline hover:outline-1 hover:outline-gray-800/30"
+        className="w-full rounded-md pl-2 pr-1 hover:outline hover:outline-1 hover:outline-gray-800/30"
       >
         {props.name}
       </Typography>
