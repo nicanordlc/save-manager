@@ -47,8 +47,11 @@ const NameInput = (props: NameInputProps) => {
   }
 
   return (
-    <div className="col-span-5 flex h-[40px] w-0 grow items-center ">
-      <Typography onClick={() => handleEdit()} className="h-6 w-full">
+    <div className="col-span-5 flex min-h-[40px] w-0 grow items-center ">
+      <Typography
+        onClick={() => handleEdit()}
+        className="w-full rounded-md pl-2 hover:outline hover:outline-1 hover:outline-gray-800/30"
+      >
         {props.name}
       </Typography>
     </div>

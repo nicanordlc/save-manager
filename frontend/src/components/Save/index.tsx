@@ -41,8 +41,8 @@ const Save = (props: SaveProps) => {
       </WithTooltip>
 
       <NameInput
-        onSubmit={(data) => {
-          updateSave({
+        onSubmit={async (data) => {
+          await updateSave({
             ID: props.data.ID,
             GameID: props.data.GameID,
             Name: data.Name,
