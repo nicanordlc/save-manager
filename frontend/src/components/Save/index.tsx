@@ -27,15 +27,15 @@ const Save = (props: SaveProps) => {
       className="flex items-center justify-between break-all even:bg-blue-gray-50/50 [&>button]:flex [&>button]:justify-center [&>button]:p-3"
       key={props.data.Name}
     >
-      <WithTooltip content="Load" placement="top">
-        <Button onClick={() => props.onLoad()} variant="text">
-          <FaUpload size={15} />
-        </Button>
-      </WithTooltip>
-
       <WithTooltip content="Save" placement="top">
         <Button onClick={() => props.onSave()} variant="text">
           <FaDownload size={15} />
+        </Button>
+      </WithTooltip>
+
+      <WithTooltip content="Load" placement="top">
+        <Button onClick={() => props.onLoad()} variant="text">
+          <FaUpload size={15} />
         </Button>
       </WithTooltip>
 
