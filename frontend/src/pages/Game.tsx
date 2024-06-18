@@ -46,6 +46,7 @@ const Game = () => {
     loadSave,
     loadQuickSave,
     overwriteSave,
+    updateSave,
   } = useSave({
     GameID: gameID,
   });
@@ -190,6 +191,13 @@ const Game = () => {
                 onSave={() => handleOverwrite(save.ID)}
                 onDelete={() => handleDelete(save.ID)}
                 onOpenDirectory={() => handleOpenSaveDirectory(save.ID)}
+                onSubmit={async (nameInput) => {
+                  await updateSave({
+                    ID: save.ID,
+                    GameID: save.GameID,
+                    Name: nameInput,
+                  });
+                }}
               />
             ))
           )}

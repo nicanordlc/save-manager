@@ -1,6 +1,6 @@
 import { Button, Typography } from "@material-tailwind/react";
 import { FaDownload, FaFolderOpen, FaTrash, FaUpload } from "react-icons/fa6";
-import useSave, { type SaveSingle } from "@/hooks/useSave";
+import { type SaveSingle } from "@/hooks/useSave";
 import WithTooltip from "@/components/WithTooltip";
 import NameInput from "@/components/Save/NameInput";
 
@@ -12,11 +12,10 @@ type SaveProps = {
   onSave: SavePropsCallback;
   onDelete: SavePropsCallback;
   onOpenDirectory: SavePropsCallback;
+  onSubmit: (nameInput: string) => void;
 };
 
 const Save = (props: SaveProps) => {
-  const { updateSave } = useSave({ GameID: props.data.GameID });
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const intlDate = new Intl.DateTimeFormat("en-US").format(date);
@@ -41,13 +40,7 @@ const Save = (props: SaveProps) => {
       </WithTooltip>
 
       <NameInput
-        onSubmit={async (data) => {
-          await updateSave({
-            ID: props.data.ID,
-            GameID: props.data.GameID,
-            Name: data.Name,
-          });
-        }}
+        onSubmit={(data) => props.onSubmit(data.Name)}
         name={props.data.Name}
       />
 
