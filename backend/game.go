@@ -140,7 +140,7 @@ func CreateGameDir(gameID uuid.UUID) error {
 }
 
 func GetGameDir(gameID uuid.UUID) (string, error) {
-	savesDir, err := utils.GetSavesDir()
+	savesDir, err := utils.GetSavesDir("")
 	if err != nil {
 		return "", err
 	}

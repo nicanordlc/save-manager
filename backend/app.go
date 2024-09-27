@@ -45,12 +45,12 @@ func (a *App) ToggleFullScreen() {
 	}
 }
 
-func (a *App) OpenDialogDirApp() (string, error) {
-	return utils.OpenDialogDir(a.ctx, a.Settings.JsonData.DefaultSavePath, false)
+func (a *App) OpenDialogDirApp(path string) (string, error) {
+	return utils.OpenDialogDir(a.ctx, path, false)
 }
 
-func (a *App) OpenDialogFileApp() (string, error) {
-	return utils.OpenDialogFile(a.ctx, a.Settings.JsonData.DefaultSavePath, true)
+func (a *App) OpenDialogFileApp(path string) (string, error) {
+	return utils.OpenDialogFile(a.ctx, path, true)
 }
 
 func (a *App) GetOS() string {

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ReadData,
+  SetDefaultAppConfigPath,
   SetDefaultSavePath,
   ToggleAlwaysOnTop,
 } from "@wailsjs/go/backend/Settings";
@@ -8,6 +9,7 @@ import {
 type Settings = {
   AlwaysOnTop: boolean;
   DefaultSavePath: string;
+  DefaultAppConfigPath: string;
   DefaultSavePathIsFile: boolean;
 };
 
@@ -36,11 +38,18 @@ const useSettings = () => {
     ) => SetDefaultSavePath(s.DefaultSavePath, s.DefaultSavePathIsFile),
   });
 
+  const { mutateAsync: setDefaultAppConfigPath } = useMutation({
+    onSuccess: updateSettings,
+    mutationFn: (s: Pick<Settings, "DefaultAppConfigPath">) =>
+      SetDefaultAppConfigPath(s.DefaultAppConfigPath),
+  });
+
   return {
     querySettings,
     updateSettings,
     setDefaultSavePath,
     toggleAlwaysOnTop,
+    setDefaultAppConfigPath,
   };
 };
 
