@@ -10,8 +10,9 @@ import (
 )
 
 type Json[T any] struct {
-	Filename string
-	JsonData T
+	Filename             string
+	DefaultAppConfigPath string
+	JsonData             T
 }
 
 func (j *Json[T]) CreateConfigJsonIfNoExists() (string, error) {
@@ -59,7 +60,7 @@ func (j *Json[T]) getConfigJson(filename string) (string, error) {
 }
 
 func (j *Json[T]) createConfigDirIfNoExist() error {
-	appConfigPath, err := utils.GetAppConfigDir("")
+	appConfigPath, err := utils.GetAppConfigDir(j.DefaultAppConfigPath)
 	if err != nil {
 		return err
 	}

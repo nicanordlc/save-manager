@@ -25,7 +25,8 @@ type JsonGame struct {
 }
 
 type Game struct {
-	ctx context.Context
+	ctx      context.Context
+	Settings *Settings
 	models.Json[JsonGame]
 }
 
