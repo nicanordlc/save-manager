@@ -8,7 +8,6 @@ import (
 	"path"
 	"time"
 
-	"github.com/cabaalexander/save-manager/backend/models"
 	"github.com/cabaalexander/save-manager/backend/utils"
 	"github.com/google/uuid"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
@@ -28,7 +27,7 @@ type JsonSave struct {
 type Save struct {
 	ctx  context.Context
 	Game *Game
-	models.Json[JsonSave]
+	Json[JsonSave]
 }
 
 func (s *Save) Startup(ctx context.Context) {

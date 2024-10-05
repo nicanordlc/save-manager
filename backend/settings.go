@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 
-	"github.com/cabaalexander/save-manager/backend/models"
 	"github.com/cabaalexander/save-manager/backend/utils"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -17,7 +16,7 @@ type JsonSettings struct {
 
 type Settings struct {
 	ctx context.Context
-	models.Json[JsonSettings]
+	Json[JsonSettings]
 }
 
 func (s *Settings) Startup(ctx context.Context) {

@@ -7,7 +7,6 @@ import (
 	"os"
 	"path"
 
-	"github.com/cabaalexander/save-manager/backend/models"
 	"github.com/cabaalexander/save-manager/backend/utils"
 	"github.com/google/uuid"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
@@ -26,7 +25,7 @@ type JsonGame struct {
 
 type Game struct {
 	ctx context.Context
-	models.Json[JsonGame]
+	Json[JsonGame]
 }
 
 func (g *Game) Startup(ctx context.Context) {
