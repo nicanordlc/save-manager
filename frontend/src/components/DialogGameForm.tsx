@@ -74,8 +74,8 @@ const DialogGameForm: FC<DialogGameFormProps> = (props) => {
 
     if (defaultValues?.formInputs?.SavePath === "") {
       path = isFileDialog
-        ? await OpenDialogFileApp()
-        : await OpenDialogDirApp();
+        ? await OpenDialogFileApp(querySettings.data?.DefaultSavePath ?? "")
+        : await OpenDialogDirApp(querySettings.data?.DefaultSavePath ?? "");
     } else {
       path = isFileDialog
         ? await OpenDialogFileGame(defaultValues?.gameID)

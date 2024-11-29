@@ -12,6 +12,7 @@ import (
 type JsonSettings struct {
 	AlwaysOnTop           bool
 	DefaultSavePath       string
+	DefaultAppConfigPath  string
 	DefaultSavePathIsFile bool
 }
 
@@ -24,7 +25,7 @@ func (s *Settings) Startup(ctx context.Context) {
 	s.ctx = ctx
 	s.Filename = "settings.json"
 	s.CreateConfigJsonIfNoExists()
-	utils.CreateSavesDirIfNoExists()
+	utils.CreateSavesDirIfNoExists("")
 
 	settings, errSettings := s.ReadData()
 	if errSettings != nil {
@@ -41,9 +42,14 @@ func (s *Settings) Startup(ctx context.Context) {
 		if path != "" {
 			s.JsonData.DefaultSavePath = path
 			s.JsonData.DefaultSavePathIsFile = false
-			s.UpdateJson()
 		}
 	}
+	if settings.DefaultAppConfigPath == "" {
+		defaultAppPath, _ := utils.GetAppConfigDir("")
+		s.JsonData.DefaultAppConfigPath = defaultAppPath
+	}
+
+	s.UpdateJson()
 }
 
 func (s *Settings) ToggleAlwaysOnTop() bool {
@@ -59,6 +65,11 @@ func (s *Settings) ToggleAlwaysOnTop() bool {
 func (s *Settings) SetDefaultSavePath(path string, isFile bool) {
 	s.JsonData.DefaultSavePath = path
 	s.JsonData.DefaultSavePathIsFile = isFile
+	s.UpdateJson()
+}
+
+func (s *Settings) SetDefaultAppConfigPath(path string) {
+	s.JsonData.DefaultAppConfigPath = path
 	s.UpdateJson()
 }
 

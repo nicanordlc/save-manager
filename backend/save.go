@@ -26,8 +26,9 @@ type JsonSave struct {
 }
 
 type Save struct {
-	ctx  context.Context
-	Game *Game
+	ctx      context.Context
+	Game     *Game
+	Settings *Settings
 	models.Json[JsonSave]
 }
 

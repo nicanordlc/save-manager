@@ -4,7 +4,16 @@ hi:
 
 .PHONY: test-backend
 test-backend:
-	@go test -v ./backend
+	@go test -v ./backend/...
+
+.PHONY: test-backend-cover
+test-backend-cover:
+	@go test -cover ./backend/...
+
+.PHONY: test-backend-cover-open
+test-backend-cover-open:
+	@go test -coverprofile=coverage.out ./backend/...
+	@go tool cover -html=coverage.out
 
 .PHONY: test-frontend-watch
 test-frontend-watch:

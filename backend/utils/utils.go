@@ -11,6 +11,10 @@ import (
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+var osUserConfigDir = os.UserConfigDir
+
+var ErrUserConfigDir = errors.New("os.UserConfigDir errored")
+
 type StartAble interface {
 	Startup(ctx context.Context)
 }
@@ -23,12 +27,12 @@ func StartApps(l []StartAble) func(ctx context.Context) {
 	}
 }
 
-func CreateSavesDirIfNoExists() (string, error) {
-	err := createConfigDirIfNoExist()
+func CreateSavesDirIfNoExists(defaultAppConfigPath string) (string, error) {
+	err := createConfigDirIfNoExist(defaultAppConfigPath)
 	if err != nil {
 		return "", err
 	}
-	savesDir, err := GetSavesDir()
+	savesDir, err := GetSavesDir(defaultAppConfigPath)
 	if err != nil {
 		return "", err
 	}
@@ -42,8 +46,8 @@ func CreateSavesDirIfNoExists() (string, error) {
 	return savesDir, nil
 }
 
-func GetSavesDir() (string, error) {
-	appConfig, err := GetAppConfigDir()
+func GetSavesDir(defaultAppConfigPath string) (string, error) {
+	appConfig, err := GetAppConfigDir(defaultAppConfigPath)
 	if err != nil {
 		return "", err
 	}
@@ -51,8 +55,8 @@ func GetSavesDir() (string, error) {
 	return savesDir, nil
 }
 
-func CreateSaveDir(saveDir string) error {
-	saveDir, err := GetSaveDir(saveDir)
+func CreateSaveDir(saveDir, defaultAppConfigPath string) error {
+	saveDir, err := GetSaveDir(saveDir, defaultAppConfigPath)
 	if err != nil {
 		return err
 	}
@@ -60,8 +64,8 @@ func CreateSaveDir(saveDir string) error {
 	return nil
 }
 
-func GetSaveDir(saveDir string) (string, error) {
-	savesDir, err := GetSavesDir()
+func GetSaveDir(saveDir, defaultAppConfigPath string) (string, error) {
+	savesDir, err := GetSavesDir(defaultAppConfigPath)
 	if err != nil {
 		return "", err
 	}
@@ -80,10 +84,13 @@ func Exists(path string) (bool, error) {
 	return false, err
 }
 
-func GetAppConfigDir() (string, error) {
-	userConfig, err := os.UserConfigDir()
+func GetAppConfigDir(defaultAppConfigPath string) (string, error) {
+	if defaultAppConfigPath != "" {
+		return defaultAppConfigPath, nil
+	}
+	userConfig, err := osUserConfigDir()
 	if err != nil {
-		return "", err
+		return "", ErrUserConfigDir
 	}
 	appConfigPath := path.Join(userConfig, "Save Manager")
 	return appConfigPath, nil
@@ -128,8 +135,8 @@ func OpenDialogDir(ctx context.Context, path string, isFile bool) (string, error
 	return path, nil
 }
 
-func createConfigDirIfNoExist() error {
-	appConfigPath, err := GetAppConfigDir()
+func createConfigDirIfNoExist(defaultAppConfigPath string) error {
+	appConfigPath, err := GetAppConfigDir(defaultAppConfigPath)
 	if err != nil {
 		return err
 	}
