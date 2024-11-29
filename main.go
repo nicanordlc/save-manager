@@ -4,7 +4,6 @@ import (
 	"embed"
 
 	"github.com/cabaalexander/save-manager/backend"
-	"github.com/cabaalexander/save-manager/backend/utils"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -25,7 +24,7 @@ func main() {
 	save.Game = game
 	app.Settings = settings
 
-	apps := []utils.StartAble{app, settings, game, save, appMenu}
+	apps := []backend.StartAble{app, settings, game, save, appMenu}
 	binds := []interface{}{app, settings, game, save}
 
 	appSize := 600
@@ -40,7 +39,7 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		Menu:             appMenu.Menu,
 		Bind:             binds,
-		OnStartup:        utils.StartApps(apps),
+		OnStartup:        backend.StartApps(apps),
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
